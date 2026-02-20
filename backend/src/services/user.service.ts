@@ -118,5 +118,5 @@ export const deleteUser = async (id: number) => {
 //Récupérer un user par son login (pour l'authentification)
 export const getUserByLogin = async (login: string) => {
   const result = await db.select().from(users).where(eq(users.login, login));
-  return result[0] as any || null;
+  return (result[0] as any) || null;
 };

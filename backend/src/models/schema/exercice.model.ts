@@ -7,7 +7,7 @@ export const exercices = pgTable("exercices", {
   title: varchar("title"),
   description: text("description"),
   type: varchar("type"),
-  totalDuration: decimal("total_duration"),
+  totalDuration: integer("total_duration"),
   inhalationDuration: integer("inhalation_duration"),
   holdDuration: integer("hold_duration").default(0),
   exhalationDuration: integer("exhalation_duration"),

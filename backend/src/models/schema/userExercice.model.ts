@@ -10,6 +10,7 @@ export const userExercice = pgTable("user_exercice", {
   exerciceId: integer("exercice_id")
     .notNull()
     .references(() => exercices.exerciceId),
+  guestId: varchar("guest_id", { length: 255 }),
   feeling: varchar("feeling", { length: 50 }).notNull(),
   dateCompletion: date("date_completion").notNull(),
 }, (table) => ({

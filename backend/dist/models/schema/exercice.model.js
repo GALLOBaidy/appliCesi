@@ -9,7 +9,7 @@ exports.exercices = (0, pg_core_1.pgTable)("exercices", {
     title: (0, pg_core_1.varchar)("title"),
     description: (0, pg_core_1.text)("description"),
     type: (0, pg_core_1.varchar)("type"),
-    totalDuration: (0, pg_core_1.decimal)("total_duration"),
+    totalDuration: (0, pg_core_1.integer)("total_duration"),
     inhalationDuration: (0, pg_core_1.integer)("inhalation_duration"),
     holdDuration: (0, pg_core_1.integer)("hold_duration").default(0),
     exhalationDuration: (0, pg_core_1.integer)("exhalation_duration"),

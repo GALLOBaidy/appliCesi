@@ -2,11 +2,15 @@
 npx tsc
 npx ts-node-dev src/server.ts
 npm install -D ts-node-dev
- node dist/server.js    
-docker ps 
-npx drizzle-kit migrate 
-npx drizzle-kit generate  
-docker exec -it postgres_container psql -U user -d mydbAckend> ppli
-docker compose up -d 
+node dist/server.js
+docker ps
+docker start postgres_container
+docker exec -it postgres_container psql -U user -d mydb
+npx drizzle-kit migrate
+npx drizzle-kit generate
+docker compose up -d
 npm install jsonwebtoken
 npm install -D @types/jsonwebtoken
+
+"login": "jdoes",
+        "password": "Secret123!",

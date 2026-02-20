@@ -12,6 +12,7 @@ exports.userExercice = (0, pg_core_1.pgTable)("user_exercice", {
     exerciceId: (0, pg_core_1.integer)("exercice_id")
         .notNull()
         .references(() => exercice_model_1.exercices.exerciceId),
+    guestId: (0, pg_core_1.varchar)("guest_id", { length: 255 }),
     feeling: (0, pg_core_1.varchar)("feeling", { length: 50 }).notNull(),
     dateCompletion: (0, pg_core_1.date)("date_completion").notNull(),
 }, (table) => ({

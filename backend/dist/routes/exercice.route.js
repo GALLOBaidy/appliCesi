@@ -34,17 +34,12 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const userController = __importStar(require("../controllers/user.controller"));
+const exerciceController = __importStar(require("../controllers/exercices.controller"));
 const auth_middleware_1 = require("../middlewares/auth.middleware");
-const auth_controller_1 = require("../controllers/auth.controller");
 const router = (0, express_1.Router)();
-router.post("/", userController.createUser);
-router.get("/", auth_middleware_1.authMiddleware, userController.getAllUsers);
-router.get("/:id", auth_middleware_1.authMiddleware, userController.getUserById);
-router.put("/:id", auth_middleware_1.authMiddleware, userController.updateUser);
-router.delete("/:id", auth_middleware_1.authMiddleware, userController.deleteUser);
-router.get("/me", auth_middleware_1.authMiddleware, (req, res) => {
-    res.json({ user: req.user });
-});
-router.post("/login", auth_controller_1.login);
+router.post("/", auth_middleware_1.authMiddleware, exerciceController.createGame);
+router.get("/", exerciceController.getAllGames);
+router.get("/:id", exerciceController.getGameById);
+router.put("/:id", auth_middleware_1.authMiddleware, exerciceController.updateGame);
+router.delete("/:id", auth_middleware_1.authMiddleware, exerciceController.deleteGame);
 exports.default = router;
