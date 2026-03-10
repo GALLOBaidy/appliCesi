@@ -14,7 +14,7 @@ export const create = async (req: Request, res: Response) => {
     const userId = (req as any).user?.id ?? null;
 
     // validation minimale
-    if (!exerciceId || !feeling || !dateCompletion) {
+    if (exerciceId == null || !feeling || !dateCompletion) {
       return res.status(400).json({ message: "Missing fields" });
     }
 
@@ -58,19 +58,7 @@ export const getByGuest = async (req: Request, res: Response) => {
   return res.json(rows);
 };
 
-// export const update = async (req: Request, res: Response) => {
-//   const id = Number(req.params.id);
-//   const userId = (req as any).user?.id ?? null;
-//   const existing = await svc.getById(id);
-//   if (!existing) return res.status(404).json({ message: "Not found" });
-
-//   // autorisation : si enregistrement lié à un user, seul ce user peut modifier
-//   if (existing.userId && existing.userId !== userId) return res.status(403).json({ message: "Forbidden" });
-
-//   const updated = await svc.updateUserExercice(id, req.body);
-//   return res.json(updated);
-// };
-
+// Supprimer un résultat
 export const remove = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const userId = (req as any).user?.id ?? null;
@@ -83,7 +71,16 @@ export const remove = async (req: Request, res: Response) => {
   return res.json(deleted);
 };
 
-// Optional: link guest results to user after login
+// Supprimer tous les résultats d'un invité
+export const deleteGuestResults = async (req: Request, res: Response) => {
+  const { guestId } = req.body;
+  if (!guestId) return res.status(400).json({ message: "guestId required" });
+
+  await svc.deleteByGuestId(guestId);
+  return res.json({ message: "Guest results deleted" });
+};
+
+//  link guest results to user after login
 export const linkGuestToUser = async (req: Request, res: Response) => {
   const userId = (req as any).user?.id;
   const { guestId } = req.body;
@@ -92,5 +89,11 @@ export const linkGuestToUser = async (req: Request, res: Response) => {
 
   // example: update all rows with guestId to set userId and clear guestId
   // implement in service if needed
-  return res.status(200).json({ message: "Implement linking in service" });
+  const rows = await svc.linkGuestToUser(guestId, userId);
+
+  return res.status(200).json({
+    message: "Guest data linked to user",
+    updated: rows.length,
+    rows,
+  });
 };

@@ -33,27 +33,42 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserByLogin = exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
+exports.updateRole = exports.getUserByIdentifier = exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
 const bcrypt = __importStar(require("bcrypt"));
 const models_1 = require("../models");
 const user_model_1 = require("../models/schema/user.model");
 const drizzle_orm_1 = require("drizzle-orm");
-//Création d'un user
+// Création d'un user
 const createUser = async (data) => {
+    // Vérifier unicité login + email
+    const existing = await models_1.db
+        .select()
+        .from(user_model_1.users)
+        .where((0, drizzle_orm_1.or)((0, drizzle_orm_1.eq)(user_model_1.users.login, data.login), (0, drizzle_orm_1.eq)(user_model_1.users.email, data.email)));
+    if (existing.length > 0) {
+        throw new Error("LOGIN_OR_EMAIL_ALREADY_EXISTS");
+    }
     // Hash du mot de passe
     const hash = await bcrypt.hash(data.password, 10);
-    //Convertir brithDay en vraie date JS
     const birthDay = data.birthDay ? new Date(data.birthDay) : null;
-    console.log("birth reçu :", data.birthDay, "->après conversion :", birthDay);
-    // Insertion flexible : on ne met que ce qui existe
     try {
         const result = await models_1.db
             .insert(user_model_1.users)
             .values({
-            ...data,
+            lastName: data.lastName,
+            firstName: data.firstName,
+            gender: data.gender,
             birthDay,
             login: data.login,
+            email: data.email,
             password: hash,
+            streetNumber: data.streetNumber,
+            streetName: data.streetName,
+            city: data.city,
+            postalCode: data.postalCode,
+            country: data.country,
+            addressComplement: data.addressComplement,
+            role: data.role ?? "user",
             registrationDate: new Date(),
         })
             .returning();
@@ -112,8 +127,20 @@ const deleteUser = async (id) => {
 };
 exports.deleteUser = deleteUser;
 //Récupérer un user par son login (pour l'authentification)
-const getUserByLogin = async (login) => {
-    const result = await models_1.db.select().from(user_model_1.users).where((0, drizzle_orm_1.eq)(user_model_1.users.login, login));
+const getUserByIdentifier = async (identifier) => {
+    const result = await models_1.db
+        .select()
+        .from(user_model_1.users)
+        .where((0, drizzle_orm_1.or)((0, drizzle_orm_1.eq)(user_model_1.users.login, identifier), (0, drizzle_orm_1.eq)(user_model_1.users.email, identifier)));
     return result[0] || null;
 };
-exports.getUserByLogin = getUserByLogin;
+exports.getUserByIdentifier = getUserByIdentifier;
+const updateRole = async (id, role) => {
+    const [row] = await models_1.db
+        .update(user_model_1.users)
+        .set({ role })
+        .where((0, drizzle_orm_1.eq)(user_model_1.users.userId, id))
+        .returning();
+    return row;
+};
+exports.updateRole = updateRole;

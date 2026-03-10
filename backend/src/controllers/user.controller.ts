@@ -62,3 +62,16 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Modifier le role
+export const updateRole = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { role } = req.body;
+
+  if (!["user", "moderator", "admin"].includes(role)) {
+    return res.status(400).json({ message: "Invalid role" });
+  }
+
+  const updated = await userService.updateRole(Number(id), role);
+  return res.json(updated);
+};

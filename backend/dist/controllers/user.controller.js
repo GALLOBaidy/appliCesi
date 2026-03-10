@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
+exports.updateRole = exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
 const userService = __importStar(require("../services/user.service"));
 //Créer un user
 const createUser = async (req, res) => {
@@ -99,3 +99,14 @@ const deleteUser = async (req, res) => {
     }
 };
 exports.deleteUser = deleteUser;
+// Modifier le role
+const updateRole = async (req, res) => {
+    const { id } = req.params;
+    const { role } = req.body;
+    if (!["user", "moderator", "admin"].includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
+    }
+    const updated = await userService.updateRole(Number(id), role);
+    return res.json(updated);
+};
+exports.updateRole = updateRole;

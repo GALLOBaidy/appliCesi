@@ -10,7 +10,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const login = async (req, res) => {
     const { login, password } = req.body;
     try {
-        const user = await (0, user_service_1.getUserByLogin)(login);
+        const user = await (0, user_service_1.getUserByIdentifier)(login);
         //Vérification de l'existance du user  
         if (!user) {
             return res.status(401).json({ error: "Identifiants invalides" });

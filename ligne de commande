@@ -11,6 +11,8 @@ npx drizzle-kit generate
 docker compose up -d
 npm install jsonwebtoken
 npm install -D @types/jsonwebtoken
+npm install -D vitest supertest ts-node @types/supertest
 
-"login": "jdoes",
-        "password": "Secret123!",
+"login": "john.Does",
+"email": "john.doe@example.com",
+"password": "monSuperMotDePasse123",

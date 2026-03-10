@@ -1,11 +1,12 @@
 import * as bcrypt from "bcrypt";
 import { db } from "../models";
 import { users } from "../models/schema/user.model";
-import { eq } from "drizzle-orm";
+import { or, eq } from "drizzle-orm";
 
-//Création d'un user
+// Création d'un user
 export const createUser = async (data: {
   login: string;
+  email: string;
   password: string;
   lastName?: string;
   firstName?: string;
@@ -20,22 +21,45 @@ export const createUser = async (data: {
   role?: string;
   registrationDate?: Date;
 }) => {
+
+  // Vérifier unicité login + email
+  const existing = await db
+    .select()
+    .from(users)
+    .where(
+      or(
+        eq(users.login, data.login),
+        eq(users.email, data.email)
+      )
+    );
+
+  if (existing.length > 0) {
+    throw new Error("LOGIN_OR_EMAIL_ALREADY_EXISTS");
+  }
+
   // Hash du mot de passe
   const hash = await bcrypt.hash(data.password, 10);
 
-  //Convertir brithDay en vraie date JS
   const birthDay = data.birthDay ? new Date(data.birthDay) : null;
-  console.log("birth reçu :", data.birthDay, "->après conversion :", birthDay);
 
-  // Insertion flexible : on ne met que ce qui existe
   try {
     const result = await db
       .insert(users)
       .values({
-        ...data,
+        lastName: data.lastName,
+        firstName: data.firstName,
+        gender: data.gender,
         birthDay,
         login: data.login,
+        email: data.email,
         password: hash,
+        streetNumber: data.streetNumber,
+        streetName: data.streetName,
+        city: data.city,
+        postalCode: data.postalCode,
+        country: data.country,
+        addressComplement: data.addressComplement,
+        role: data.role ?? "user",
         registrationDate: new Date(),
       })
       .returning();
@@ -116,7 +140,26 @@ export const deleteUser = async (id: number) => {
 };
 
 //Récupérer un user par son login (pour l'authentification)
-export const getUserByLogin = async (login: string) => {
-  const result = await db.select().from(users).where(eq(users.login, login));
-  return (result[0] as any) || null;
+export const getUserByIdentifier = async (identifier: string) => {
+  const result = await db
+    .select()
+    .from(users)
+    .where(
+      or(
+        eq(users.login, identifier),
+        eq(users.email, identifier)
+      )
+    );
+
+  return result[0] || null;
+};
+
+export const updateRole = async (id: number, role: string) => {
+  const [row] = await db
+    .update(users)
+    .set({ role })
+    .where(eq(users.userId, id))
+    .returning();
+
+  return row;
 };

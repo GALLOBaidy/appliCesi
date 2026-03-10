@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, text, integer, decimal, boolean } from "drizzle-orm/pg-core";
+import { pgTable, serial, varchar, text, integer, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { userExercice } from "./userExercice.model";
 

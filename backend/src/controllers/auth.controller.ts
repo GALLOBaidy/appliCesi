@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getUserByLogin} from "../services/user.service"
+import { getUserByIdentifier} from "../services/user.service"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -7,7 +7,7 @@ export const login = async(req: Request, res: Response) => {
     const {login, password} = req.body;
 
     try {
-        const user = await getUserByLogin(login);
+        const user = await getUserByIdentifier(login);
 
         //Vérification de l'existance du user  
         if (!user) {

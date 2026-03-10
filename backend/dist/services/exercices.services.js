@@ -31,9 +31,10 @@ const updateGame = async (id, data) => {
     const existing = await (0, exports.getGameById)(id);
     if (!existing)
         return null;
+    const cleanData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
     const result = await models_1.db
         .update(exercice_model_1.exercices)
-        .set(data)
+        .set(cleanData)
         .where((0, drizzle_orm_1.eq)(exercice_model_1.exercices.exerciceId, id))
         .returning();
     return result[0] || null;

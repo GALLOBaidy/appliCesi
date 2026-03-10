@@ -10,15 +10,20 @@ exports.users = (0, pg_core_1.pgTable)("users", {
     firstName: (0, pg_core_1.varchar)("first_name"),
     gender: (0, pg_core_1.varchar)("gender"),
     birthDay: (0, pg_core_1.date)("birth_day", { mode: "date" }),
-    login: (0, pg_core_1.varchar)("login"),
-    password: (0, pg_core_1.text)("password"),
+    // Identifiants
+    login: (0, pg_core_1.varchar)("login").notNull().unique(),
+    email: (0, pg_core_1.varchar)("email").notNull().unique(),
+    password: (0, pg_core_1.text)("password").notNull(),
+    // Adresse
     streetNumber: (0, pg_core_1.varchar)("street_number"),
     streetName: (0, pg_core_1.varchar)("street_name"),
     city: (0, pg_core_1.varchar)("city"),
     postalCode: (0, pg_core_1.integer)("postal_code"),
     country: (0, pg_core_1.varchar)("country"),
     addressComplement: (0, pg_core_1.varchar)("address_complement"),
-    role: (0, pg_core_1.varchar)("role"),
+    // Rôle
+    role: (0, pg_core_1.varchar)("role").notNull().default("user"),
+    // Date d'inscription
     registrationDate: (0, pg_core_1.date)("registration_date", { mode: "date" }),
 });
 exports.usersRelations = (0, drizzle_orm_1.relations)(exports.users, ({ many }) => ({

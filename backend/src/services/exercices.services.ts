@@ -54,9 +54,13 @@ export const updateGame = async (
   const existing = await getGameById(id);
   if (!existing) return null;
 
+  const cleanData = Object.fromEntries(
+    Object.entries(data).filter(([_, v]) => v !== undefined),
+  );
+
   const result = await db
     .update(exercices)
-    .set(data)
+    .set(cleanData)
     .where(eq(exercices.exerciceId, id))
     .returning();
 

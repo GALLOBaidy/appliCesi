@@ -22,12 +22,27 @@ export const getByGuestId = async (guestId: string) => {
   return db.select().from(userExercice).where(eq(userExercice.guestId, guestId));
 };
 
-// export const updateUserExercice = async (id: number, data: Partial<{ feeling: string; dateCompletion: string }>) => {
-//   const [row] = await db.update(userExercice).set(data).where(eq(userExercice.id, id)).returning();
-//   return row ?? null;
-// };
-
 export const deleteUserExercice = async (id: number) => {
   const [row] = await db.delete(userExercice).where(eq(userExercice.id, id)).returning();
   return row ?? null;
+};
+
+export const deleteByGuestId = async (guestId: string) => {
+  return db
+    .delete(userExercice)
+    .where(eq(userExercice.guestId, guestId));
+};
+
+
+export const linkGuestToUser = async (guestId: string, userId: number) => {
+  const rows = await db
+    .update(userExercice)
+    .set({
+      userId,
+      guestId: null, // on supprime le guestId
+    })
+    .where(eq(userExercice.guestId, guestId))
+    .returning();
+
+  return rows;
 };
