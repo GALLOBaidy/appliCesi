@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteGame = exports.updateGame = exports.getGameById = exports.getAllGames = exports.createGame = void 0;
+exports.toggleExerciseStatusService = exports.deleteGame = exports.updateGame = exports.getGameById = exports.getAllGames = exports.createGame = void 0;
 const models_1 = require("../models");
 const exercice_model_1 = require("../models/schema/exercice.model");
 const drizzle_orm_1 = require("drizzle-orm");
@@ -53,3 +53,21 @@ const deleteGame = async (id) => {
     return result[0] || null;
 };
 exports.deleteGame = deleteGame;
+const toggleExerciseStatusService = async (id) => {
+    // Récupère l'exercice
+    const existing = await models_1.db
+        .select()
+        .from(exercice_model_1.exercices)
+        .where((0, drizzle_orm_1.eq)(exercice_model_1.exercices.exerciceId, id));
+    if (!existing[0])
+        return null;
+    const currentStatus = existing[0].status;
+    // Inverse le booléen
+    const result = await models_1.db
+        .update(exercice_model_1.exercices)
+        .set({ status: !currentStatus })
+        .where((0, drizzle_orm_1.eq)(exercice_model_1.exercices.exerciceId, id))
+        .returning();
+    return result[0] || null;
+};
+exports.toggleExerciseStatusService = toggleExerciseStatusService;

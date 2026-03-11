@@ -39,11 +39,14 @@ const auth_middleware_1 = require("../middlewares/auth.middleware");
 const router = (0, express_1.Router)();
 router.post("/", userController.createUser);
 router.get("/", auth_middleware_1.authMiddleware, userController.getAllUsers);
+router.get("/me", auth_middleware_1.authMiddleware, (req, res) => {
+    return res.json({ user: req.user });
+});
 router.get("/:id", auth_middleware_1.authMiddleware, userController.getUserById);
 router.put("/:id", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, userController.updateUser);
 router.delete("/:id", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, userController.deleteUser);
-router.get("/me", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (req, res) => {
-    res.json({ user: req.user });
-});
 router.patch("/:id/role", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), userController.updateRole);
+router.post("/logout", (req, res) => {
+    return res.json({ message: "Déconnecté" });
+});
 exports.default = router;

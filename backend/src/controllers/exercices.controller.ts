@@ -62,3 +62,23 @@ export const deleteGame = async (req: Request, res: Response) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const toggleExerciseStatusController = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const id = Number(req.params.id);
+
+    const updated = await exercicesService.toggleExerciseStatusService(id);
+
+    if (!updated) {
+      return res.status(404).json({ message: "Exercice introuvable" });
+    }
+
+    res.json(updated);
+  } catch (err) {
+    console.error("Erreur toggle status :", err);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};

@@ -22,7 +22,15 @@ router.delete(
   "/:id",
   authMiddleware,
   requireAuth,
+  requireRole("Admin"),
   exerciceController.deleteGame,
+);
+router.patch(
+  "/:id/status",
+  authMiddleware,
+  requireAuth,
+  requireRole("Admin"),
+  exerciceController.toggleExerciseStatusController,
 );
 
 export default router;

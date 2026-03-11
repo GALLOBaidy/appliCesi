@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import userRoutes from "./routes/user.route";
 import exercicesRoutes from "./routes/exercice.route";
+import userExoRoute from "./routes/userGame.route";
 import { login } from "./controllers/auth.controller";
 import statsRoutes from "./routes/stats.route";
 
@@ -17,6 +18,7 @@ app.use("/login", login);
 // Mes routes
 app.use("/users", userRoutes);
 app.use("/games", exercicesRoutes);
+app.use("/user-exo", userExoRoute);
 app.use("/stats", statsRoutes);
 
 app.use((err: any, req: any, res: any, next: any) => {

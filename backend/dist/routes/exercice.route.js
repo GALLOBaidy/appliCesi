@@ -41,5 +41,6 @@ router.post("/", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth
 router.get("/", exerciceController.getAllGames);
 router.get("/:id", exerciceController.getGameById);
 router.put("/:id", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, exerciceController.updateGame);
-router.delete("/:id", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, exerciceController.deleteGame);
+router.delete("/:id", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), exerciceController.deleteGame);
+router.patch("/:id/status", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), exerciceController.toggleExerciseStatusController);
 exports.default = router;

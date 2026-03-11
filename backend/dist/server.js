@@ -8,6 +8,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const user_route_1 = __importDefault(require("./routes/user.route"));
 const exercice_route_1 = __importDefault(require("./routes/exercice.route"));
+const userGame_route_1 = __importDefault(require("./routes/userGame.route"));
 const auth_controller_1 = require("./controllers/auth.controller");
 const stats_route_1 = __importDefault(require("./routes/stats.route"));
 const app = (0, express_1.default)();
@@ -18,6 +19,7 @@ app.use("/login", auth_controller_1.login);
 // Mes routes
 app.use("/users", user_route_1.default);
 app.use("/games", exercice_route_1.default);
+app.use("/user-exo", userGame_route_1.default);
 app.use("/stats", stats_route_1.default);
 app.use((err, req, res, next) => {
     console.error("🔥 ERROR:", err);

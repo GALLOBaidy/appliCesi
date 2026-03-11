@@ -13,6 +13,6 @@ npm install jsonwebtoken
 npm install -D @types/jsonwebtoken
 npm install -D vitest supertest ts-node @types/supertest
 
-"login": "john.Does",
+"login": "johnDoes",
 "email": "john.doe@example.com",
-"password": "monSuperMotDePasse123",
+"password": "Admin",

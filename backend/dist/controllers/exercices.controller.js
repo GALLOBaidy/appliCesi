@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteGame = exports.updateGame = exports.getGameById = exports.getAllGames = exports.createGame = void 0;
+exports.toggleExerciseStatusController = exports.deleteGame = exports.updateGame = exports.getGameById = exports.getAllGames = exports.createGame = void 0;
 const exercicesService = __importStar(require("../services/exercices.services"));
 // Créer un exercice
 const createGame = async (req, res) => {
@@ -99,3 +99,18 @@ const deleteGame = async (req, res) => {
     }
 };
 exports.deleteGame = deleteGame;
+const toggleExerciseStatusController = async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+        const updated = await exercicesService.toggleExerciseStatusService(id);
+        if (!updated) {
+            return res.status(404).json({ message: "Exercice introuvable" });
+        }
+        res.json(updated);
+    }
+    catch (err) {
+        console.error("Erreur toggle status :", err);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+exports.toggleExerciseStatusController = toggleExerciseStatusController;

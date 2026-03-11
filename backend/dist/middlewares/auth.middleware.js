@@ -13,7 +13,11 @@ const authMiddleware = (req, res, next) => {
     const token = header.split(" ")[1];
     try {
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // Attacher les infos du user à la requête
+        // Normalisation : on crée un champ id cohérent
+        req.user = {
+            ...decoded,
+            id: decoded.userId, // <-- clé essentielle
+        };
         next();
     }
     catch (err) {

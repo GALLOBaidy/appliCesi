@@ -80,3 +80,23 @@ export const deleteGame = async (id: number) => {
 
   return result[0] || null;
 };
+export const toggleExerciseStatusService = async (id: number) => {
+  // Récupère l'exercice
+  const existing = await db
+    .select()
+    .from(exercices)
+    .where(eq(exercices.exerciceId, id));
+
+  if (!existing[0]) return null;
+
+  const currentStatus = existing[0].status;
+
+  // Inverse le booléen
+  const result = await db
+    .update(exercices)
+    .set({ status: !currentStatus })
+    .where(eq(exercices.exerciceId, id))
+    .returning();
+
+  return result[0] || null;
+};

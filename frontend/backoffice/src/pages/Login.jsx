@@ -14,7 +14,7 @@ export default function Login() {
       const data = await loginAdmin(login, password);
 
       localStorage.setItem("adminToken", data.token);
-      navigate("/dashboard");
+      navigate("/admin/dashboard");
     } catch (err) {
       if (err.message === "NOT_ADMIN") {
         alert("Accès refusé : vous n'êtes pas administrateur");

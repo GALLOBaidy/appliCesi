@@ -103,7 +103,7 @@ exports.deleteUser = deleteUser;
 const updateRole = async (req, res) => {
     const { id } = req.params;
     const { role } = req.body;
-    if (!["user", "moderator", "admin"].includes(role)) {
+    if (!["User", "Moderator", "Admin"].includes(role)) {
         return res.status(400).json({ message: "Invalid role" });
     }
     const updated = await userService.updateRole(Number(id), role);

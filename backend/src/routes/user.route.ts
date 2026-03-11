@@ -9,12 +9,12 @@ const router = Router();
 
 router.post("/", userController.createUser);
 router.get("/", authMiddleware, userController.getAllUsers);
+router.get("/me", authMiddleware, (req, res) => {
+  return res.json({ user: (req as any).user });
+});
 router.get("/:id", authMiddleware, userController.getUserById);
 router.put("/:id", authMiddleware, requireAuth, userController.updateUser);
 router.delete("/:id", authMiddleware, requireAuth, userController.deleteUser);
-router.get("/me", authMiddleware, requireAuth, (req, res) => {
-  res.json({ user: (req as any).user });
-});
 
 router.patch(
   "/:id/role",
@@ -23,5 +23,9 @@ router.patch(
   requireRole("Admin"),
   userController.updateRole,
 );
+router.post("/logout", (req, res) => {
+  return res.json({ message: "Déconnecté" });
+});
+
 
 export default router;

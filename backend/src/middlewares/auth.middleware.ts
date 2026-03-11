@@ -15,8 +15,12 @@ export const authMiddleware = (
   const token = header.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    (req as any).user = decoded; // Attacher les infos du user à la requête
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    // Normalisation : on crée un champ id cohérent
+    (req as any).user = {
+      ...decoded,
+      id: decoded.userId, // <-- clé essentielle
+    };
     next();
   } catch (err) {
     console.error("Token verification failed:", err);
@@ -36,7 +40,11 @@ export const requireAuth = (
 };
 
 // optionalAuth : laisse passer, mais peut remplir req.user si token présent
-export const optionalAuth = (req: Request, res: Response, next: NextFunction) => {
+export const optionalAuth = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const header = req.headers.authorization;
   if (!header) return next();
 
@@ -66,4 +74,3 @@ export const requireRole = (role: string) => {
     next();
   };
 };
-
