@@ -27,6 +27,9 @@ export const getCurrentUser = () => api.get("/users/me");
 export const updateRole = (id, role) =>
   api.patch(`/users/${id}/role`, { role });
 export const createUser = (payload) => api.post("/users", payload);
+export const updateProfil = (payload) => api.put(`/users/me`, payload);
+export const desactivate = (id, payload) =>
+  api.patch(`/users/${id}/toggle`, payload);
 
 // Les exos
 export const getAllGames = () => api.get("/games");

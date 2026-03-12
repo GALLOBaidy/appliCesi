@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 
 export default function AddUserDialog({ open, onClose, onSubmit }) {
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -24,21 +25,36 @@ export default function AddUserDialog({ open, onClose, onSubmit }) {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = () => {
-    onSubmit(form);
-    setForm({
-      firstName: "",
-      lastName: "",
-      email: "",
-      login: "",
-      password: "",
-      role: "User",
-    });
+  const handleSubmit = async () => {
+    try {
+      setError(""); // reset erreur
+      await onSubmit(form); // on attend la réponse backend
+      // Si ok reset formulaire
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        login: "",
+        password: "",
+        role: "User",
+      });
+
+      onClose(); // fermer la popup
+    } catch (e) {
+      // Récupérer le message du backend
+      if (e.response.data.error) {
+        setError(e.response.data.error);
+      } else {
+        setError("Erreur lors de la création de l'utilisateur");
+      }
+    }
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
       <DialogTitle>Ajouter un utilisateur</DialogTitle>
+
+      {error && <Box sx={{ color: "red", fontSize: 14 }}>{error}</Box>}
 
       <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <TextField name="firstName" label="Prénom" onChange={handleChange} />
@@ -66,16 +82,16 @@ export default function AddUserDialog({ open, onClose, onSubmit }) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Annuler</Button>
-        <Button variant="contained" onClick={handleSubmit}>
+        <Button variant="contained" onClick={handleSubmit} disabled={!!error}>
           Ajouter
         </Button>
+        <Button onClick={onClose}>Annuler</Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-// Validation des props 
+// Validation des props
 AddUserDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,

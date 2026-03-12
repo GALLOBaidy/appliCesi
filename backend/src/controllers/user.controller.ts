@@ -7,7 +7,15 @@ export const createUser = async (req: Request, res: Response) => {
     const user = await userService.createUser(req.body);
     res.status(200).json(user);
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    if (err.message === "EMAIL_ALREADY_USED") {
+      return res.status(400).json({ error: "Cet email est déjà utilisé" });
+    }
+    if (err.message === "LOGIN_ALREADY_USED") {
+      return res.status(400).json({ error: "Ce login est déjà utilisé" });
+    }
+
+    console.error(err);
+    res.status(500).json({ error: "Erreur server" });
   }
 };
 
@@ -34,19 +42,26 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-//Modifier des données
+//Modifier des données du profil
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const updatedUser = await userService.updateUser(
-      Number(req.params.id),
-      req.body,
-    );
+    const userId = req.user!.userId; // ID du token
+
+    const updatedUser = await userService.updateUser(userId, req.body);
     if (!updatedUser) {
       return res.status(404).json({ error: "User not found" });
     }
     res.status(200).json(updatedUser);
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    if (err.message === "EMAIL_ALREADY_USED") {
+      return res.status(400).json({ error: "Cet email est déjà utilisé" });
+    }
+    if (err.message === "LOGIN_ALREADY_USED") {
+      return res.status(400).json({ error: "Ce login est déjà utilisé" });
+    }
+
+    console.error(err);
+    res.status(500).json({ error: "Erreur server" });
   }
 };
 
@@ -74,4 +89,25 @@ export const updateRole = async (req: Request, res: Response) => {
 
   const updated = await userService.updateRole(Number(id), role);
   return res.json(updated);
+};
+
+// Désactiver un compte
+export const toggleAccount = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    const { isActive } = req.body;
+
+    if (typeof isActive !== "boolean") {
+      return res.status(400).json({ message: "isActive manquant ou invalide" });
+    }
+    const updated = await userService.toggle(id, isActive);
+
+    if (!updated) {
+      return res.status(404).json({ message: "Compte introuvable" });
+    }
+    res.status(200).json(updated);
+  } catch (e) {
+    console.error("Error toggle:", e);
+    res.status(500).json({ message: "Errerur server" });
+  }
 };

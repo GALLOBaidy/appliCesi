@@ -3,6 +3,39 @@ import { db } from "../models";
 import { users } from "../models/schema/user.model";
 import { or, eq } from "drizzle-orm";
 
+// --- Helpers ----------------------------------------------------
+
+async function ensureEmailUnique(newEmail?: string, currentEmail?: string) {
+  if (!newEmail || newEmail === currentEmail) return;
+
+  const exists = await db.select().from(users).where(eq(users.email, newEmail));
+
+  if (exists.length > 0) {
+    throw new Error("EMAIL_ALREADY_USED");
+  }
+}
+
+async function ensureLoginUnique(newLogin?: string, currentLogin?: string) {
+  if (!newLogin || newLogin === currentLogin) return;
+
+  const exists = await db.select().from(users).where(eq(users.login, newLogin));
+
+  if (exists.length > 0) {
+    throw new Error("LOGIN_ALREADY_USED");
+  }
+}
+
+function normalizeBirthDay(value?: any) {
+  if (!value) return undefined;
+
+  const d = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(d.getTime()) ? undefined : d;
+}
+
+async function hashPasswordIfNeeded(password?: string) {
+  return password ? await bcrypt.hash(password, 10) : undefined;
+}
+
 // Création d'un user
 export const createUser = async (data: {
   login: string;
@@ -21,22 +54,11 @@ export const createUser = async (data: {
   role?: string;
   registrationDate?: Date;
 }) => {
+  // Vérifier email unique
+  await ensureEmailUnique(data.email, "");
 
-  // Vérifier unicité login + email
-  const existing = await db
-    .select()
-    .from(users)
-    .where(
-      or(
-        eq(users.login, data.login),
-        eq(users.email, data.email)
-      )
-    );
-
-  if (existing.length > 0) {
-    throw new Error("LOGIN_OR_EMAIL_ALREADY_EXISTS");
-  }
-
+  // Vérifier login unique
+  await ensureLoginUnique(data.login, "");
   // Hash du mot de passe
   const hash = await bcrypt.hash(data.password, 10);
 
@@ -85,11 +107,13 @@ export const getUserById = async (id: number) => {
   return user;
 };
 
-//Modifier des données
+// --- Main function ----------------------------------------------
+
 export const updateUser = async (
   id: number,
   data: Partial<{
     login: string;
+    email: string;
     password: string;
     lastName: string;
     firstName: string;
@@ -105,27 +129,41 @@ export const updateUser = async (
     registrationDate: Date;
   }>,
 ) => {
-  //Vérifier si le user existe
   const existingUser = await getUserById(id);
   if (!existingUser) return null;
 
-  const updateData: any = { ...data };
-
-  //Empêcher la modification de la date de d'inscription
-  delete updateData.registrationDate;
-
-  // Re-hash si password fourni
-  if (data.password) {
-    updateData.password = await bcrypt.hash(data.password, 10);
+  // Vérifications unicité
+  if (data.email !== undefined) {
+    await ensureEmailUnique(data.email, existingUser.email);
   }
 
-  const result = await db
-    .update(users)
-    .set(updateData)
-    .where(eq(users.userId, id))
-    .returning();
+  if (data.login !== undefined) {
+    await ensureLoginUnique(data.login, existingUser.login);
+  }
 
-  return result[0] ?? null;
+  // Préparation des données
+  const updateData: any = {
+    ...data,
+    birthDay: normalizeBirthDay(data.birthDay),
+    password: await hashPasswordIfNeeded(data.password),
+  };
+
+  // Champs protégés
+  delete updateData.registrationDate;
+  delete updateData.role;
+
+  try {
+    const result = await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.userId, id))
+      .returning();
+
+    return result[0] ?? null;
+  } catch (err: any) {
+    console.error("DB update error:", err);
+    throw err;
+  }
 };
 
 //Supprimer un user
@@ -144,20 +182,34 @@ export const getUserByIdentifier = async (identifier: string) => {
   const result = await db
     .select()
     .from(users)
-    .where(
-      or(
-        eq(users.login, identifier),
-        eq(users.email, identifier)
-      )
-    );
+    .where(or(eq(users.login, identifier), eq(users.email, identifier)));
 
   return result[0] || null;
 };
 
+// Modifier le rôle
 export const updateRole = async (id: number, role: string) => {
   const [row] = await db
     .update(users)
     .set({ role })
+    .where(eq(users.userId, id))
+    .returning();
+
+  return row;
+};
+
+// Désactiver un compte
+export const toggle = async (id: number, isActive: boolean) => {
+  // Récupérer le profil
+  const existing = await db.select().from(users).where(eq(users.userId, id));
+
+  if (!existing[0]) return null;
+
+
+  // Désactiver le compte
+  const [row] = await db
+    .update(users)
+    .set({ isActive })
     .where(eq(users.userId, id))
     .returning();
 

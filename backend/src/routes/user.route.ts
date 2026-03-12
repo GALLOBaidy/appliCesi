@@ -5,15 +5,22 @@ import {
   requireRole,
   requireAuth,
 } from "../middlewares/auth.middleware";
+import { getUserById } from "../services/user.service";
 const router = Router();
 
 router.post("/", userController.createUser);
 router.get("/", authMiddleware, userController.getAllUsers);
-router.get("/me", authMiddleware, (req, res) => {
-  return res.json({ user: (req as any).user });
+router.get("/me", authMiddleware, async (req, res) => {
+  const userId = req.user!.userId;
+  const user = await getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: "Utilisateur introuvable" });
+  }
+
+  return res.json({ user });
 });
 router.get("/:id", authMiddleware, userController.getUserById);
-router.put("/:id", authMiddleware, requireAuth, userController.updateUser);
+router.put("/me", authMiddleware, requireAuth, userController.updateUser);
 router.delete("/:id", authMiddleware, requireAuth, userController.deleteUser);
 
 router.patch(
@@ -23,9 +30,15 @@ router.patch(
   requireRole("Admin"),
   userController.updateRole,
 );
+router.patch(
+  "/:id/toggle",
+  authMiddleware,
+  requireAuth,
+  requireRole("Admin"),
+  userController.toggleAccount,
+);
 router.post("/logout", (req, res) => {
   return res.json({ message: "Déconnecté" });
 });
-
 
 export default router;

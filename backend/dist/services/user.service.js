@@ -33,21 +33,43 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateRole = exports.getUserByIdentifier = exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
+exports.toggle = exports.updateRole = exports.getUserByIdentifier = exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
 const bcrypt = __importStar(require("bcrypt"));
 const models_1 = require("../models");
 const user_model_1 = require("../models/schema/user.model");
 const drizzle_orm_1 = require("drizzle-orm");
+// --- Helpers ----------------------------------------------------
+async function ensureEmailUnique(newEmail, currentEmail) {
+    if (!newEmail || newEmail === currentEmail)
+        return;
+    const exists = await models_1.db.select().from(user_model_1.users).where((0, drizzle_orm_1.eq)(user_model_1.users.email, newEmail));
+    if (exists.length > 0) {
+        throw new Error("EMAIL_ALREADY_USED");
+    }
+}
+async function ensureLoginUnique(newLogin, currentLogin) {
+    if (!newLogin || newLogin === currentLogin)
+        return;
+    const exists = await models_1.db.select().from(user_model_1.users).where((0, drizzle_orm_1.eq)(user_model_1.users.login, newLogin));
+    if (exists.length > 0) {
+        throw new Error("LOGIN_ALREADY_USED");
+    }
+}
+function normalizeBirthDay(value) {
+    if (!value)
+        return undefined;
+    const d = value instanceof Date ? value : new Date(value);
+    return Number.isNaN(d.getTime()) ? undefined : d;
+}
+async function hashPasswordIfNeeded(password) {
+    return password ? await bcrypt.hash(password, 10) : undefined;
+}
 // Création d'un user
 const createUser = async (data) => {
-    // Vérifier unicité login + email
-    const existing = await models_1.db
-        .select()
-        .from(user_model_1.users)
-        .where((0, drizzle_orm_1.or)((0, drizzle_orm_1.eq)(user_model_1.users.login, data.login), (0, drizzle_orm_1.eq)(user_model_1.users.email, data.email)));
-    if (existing.length > 0) {
-        throw new Error("LOGIN_OR_EMAIL_ALREADY_EXISTS");
-    }
+    // Vérifier email unique
+    await ensureEmailUnique(data.email, "");
+    // Vérifier login unique
+    await ensureLoginUnique(data.login, "");
     // Hash du mot de passe
     const hash = await bcrypt.hash(data.password, 10);
     const birthDay = data.birthDay ? new Date(data.birthDay) : null;
@@ -95,25 +117,39 @@ const getUserById = async (id) => {
     return user;
 };
 exports.getUserById = getUserById;
-//Modifier des données
+// --- Main function ----------------------------------------------
 const updateUser = async (id, data) => {
-    //Vérifier si le user existe
     const existingUser = await (0, exports.getUserById)(id);
     if (!existingUser)
         return null;
-    const updateData = { ...data };
-    //Empêcher la modification de la date de d'inscription
-    delete updateData.registrationDate;
-    // Re-hash si password fourni
-    if (data.password) {
-        updateData.password = await bcrypt.hash(data.password, 10);
+    // Vérifications unicité
+    if (data.email !== undefined) {
+        await ensureEmailUnique(data.email, existingUser.email);
     }
-    const result = await models_1.db
-        .update(user_model_1.users)
-        .set(updateData)
-        .where((0, drizzle_orm_1.eq)(user_model_1.users.userId, id))
-        .returning();
-    return result[0] ?? null;
+    if (data.login !== undefined) {
+        await ensureLoginUnique(data.login, existingUser.login);
+    }
+    // Préparation des données
+    const updateData = {
+        ...data,
+        birthDay: normalizeBirthDay(data.birthDay),
+        password: await hashPasswordIfNeeded(data.password),
+    };
+    // Champs protégés
+    delete updateData.registrationDate;
+    delete updateData.role;
+    try {
+        const result = await models_1.db
+            .update(user_model_1.users)
+            .set(updateData)
+            .where((0, drizzle_orm_1.eq)(user_model_1.users.userId, id))
+            .returning();
+        return result[0] ?? null;
+    }
+    catch (err) {
+        console.error("DB update error:", err);
+        throw err;
+    }
 };
 exports.updateUser = updateUser;
 //Supprimer un user
@@ -135,6 +171,7 @@ const getUserByIdentifier = async (identifier) => {
     return result[0] || null;
 };
 exports.getUserByIdentifier = getUserByIdentifier;
+// Modifier le rôle
 const updateRole = async (id, role) => {
     const [row] = await models_1.db
         .update(user_model_1.users)
@@ -144,3 +181,18 @@ const updateRole = async (id, role) => {
     return row;
 };
 exports.updateRole = updateRole;
+// Désactiver un compte
+const toggle = async (id, isActive) => {
+    // Récupérer le profil
+    const existing = await models_1.db.select().from(user_model_1.users).where((0, drizzle_orm_1.eq)(user_model_1.users.userId, id));
+    if (!existing[0])
+        return null;
+    // Désactiver le compte
+    const [row] = await models_1.db
+        .update(user_model_1.users)
+        .set({ isActive })
+        .where((0, drizzle_orm_1.eq)(user_model_1.users.userId, id))
+        .returning();
+    return row;
+};
+exports.toggle = toggle;

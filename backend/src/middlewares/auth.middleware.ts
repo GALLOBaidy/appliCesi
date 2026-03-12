@@ -20,6 +20,7 @@ export const authMiddleware = (
     (req as any).user = {
       ...decoded,
       id: decoded.userId, // <-- clé essentielle
+      userId: decoded.userId, // <-- clé essentielle
     };
     next();
   } catch (err) {

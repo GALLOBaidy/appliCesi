@@ -8,9 +8,15 @@ import {
   MenuItem,
   Grid,
 } from "@mui/material";
+import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 
-export default function ExerciseDialog({ open, onClose, onSubmit, initialData }) {
+export default function ExerciseDialog({
+  open,
+  onClose,
+  onSubmit,
+  initialData,
+}) {
   // Formulaire local (pré-rempli si on modifie un exercice)
   const [form, setForm] = useState({
     title: "",
@@ -171,3 +177,26 @@ export default function ExerciseDialog({ open, onClose, onSubmit, initialData })
     </Dialog>
   );
 }
+
+// Validation des props
+ExerciseDialog.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  initialData: PropTypes.shape({
+    title: PropTypes.string,
+    description: PropTypes.string,
+    type: PropTypes.string,
+    totalDuration: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    inhalationDuration: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    holdDuration: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    exhalationDuration: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    cycle: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }),
+};

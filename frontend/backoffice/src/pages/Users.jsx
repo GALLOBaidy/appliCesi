@@ -5,11 +5,17 @@ import {
   Select,
   Box,
   Typography,
-  Container,
   Paper,
+  Switch,
   Button,
 } from "@mui/material";
-import { getAllUsers, updateRole, getCurrentUser, createUser } from "../api/admin";
+import {
+  getAllUsers,
+  updateRole,
+  getCurrentUser,
+  createUser,
+  desactivate,
+} from "../api/admin";
 import AddUserDialog from "../components/AddUser";
 
 export default function Users() {
@@ -42,6 +48,26 @@ export default function Users() {
     // Mise à jour locale de la liste
     setUsers((prev) =>
       prev.map((u) => (u.userId === id ? { ...u, role: newRole } : u)),
+    );
+  };
+
+  // Désactivation d'un compte
+  const handleToggle = async (user) => {
+    const newStatus = !user.isActive;
+    // Empêcher de désactiver son compte
+    if (
+      currentUser &&
+      currentUser.userId === user.userId &&
+      newStatus === false
+    ) {
+      alert("Tune peux pas désctiver ton compte");
+      return;
+    }
+    await desactivate(user.userId, { isActive: newStatus });
+    setUsers((prev) =>
+      prev.map((e) =>
+        e.userId === user.userId ? { ...e, isActive: newStatus } : e,
+      ),
     );
   };
 
@@ -78,57 +104,90 @@ export default function Users() {
         );
       },
     },
+    // Switch d'activation
+    {
+      field: "isActive",
+      headerName: "Actif",
+      flex: 0.5,
+      renderCell: (params) => {
+        // Empêcher de désactiver son compte
+        const isSelf =
+          currentUser &&
+          currentUser.userId === params.row.userId &&
+          params.row.role === "Admin";
+        return (
+          <Switch
+            checked={params.row.isActive}
+            onChange={() => handleToggle(params.row)}
+            disabled={isSelf}
+          />
+        );
+      },
+    },
   ];
 
   return (
     <>
       {/* Conteneur principal */}
-      <Container
-        maxWidth="md"
+      <Box
         sx={{
-          mt: 6,
+          width: "100%",
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          justifyContent: "center", // centre tout
+          mt: 6,
         }}
       >
-        <Typography variant="h4" fontWeight="bold" mb={4} textAlign="center">
-          Gestion des utilisateurs
-        </Typography>
-
-        {/* Carte contenant le tableau */}
-        <Paper
-          elevation={4}
+        <Box
           sx={{
             width: "100%",
-            maxWidth: 800,
-            mx: "auto",
-            p: 3,
-            borderRadius: 3,
-            backgroundColor: "#fff",
+            maxWidth: "1400px", // largeur max
+            minWidth: "1200px", // 🔥 largeur minimum pour éviter le tableau mini
+            px: 3, // espace gauche/droite
+            boxSizing: "border-box",
           }}
         >
-          {/* Bouton pour ouvrir la popup d'ajout */}
-          <Button
-            variant="contained"
-            sx={{ mb: 2 }}
-            onClick={() => setOpenAddUser(true)}
+          <Typography variant="h4" fontWeight="bold" mb={4} textAlign="center">
+            Gestion des utilisateurs
+          </Typography>
+
+          <Paper
+            elevation={4}
+            sx={{
+              width: "100%",
+              p: 3,
+              borderRadius: 3,
+              backgroundColor: "#fff",
+              boxSizing: "border-box",
+            }}
           >
-            Ajouter un utilisateur
-          </Button>
+            <Button
+              variant="contained"
+              sx={{ mb: 2 }}
+              onClick={() => setOpenAddUser(true)}
+            >
+              Ajouter un utilisateur
+            </Button>
 
-          {/* Tableau des utilisateurs */}
-          <Box sx={{ height: 500 }}>
-            <DataGrid
-              rows={users}
-              columns={columns}
-              getRowId={(row) => row.userId}
-              disableRowSelectionOnClick
-            />
-          </Box>
-        </Paper>
-      </Container>
-
+            <Box
+              sx={{
+                height: 500,
+                width: "100%",
+                overflowX: "hidden", // 🔥 jamais de scroll horizontal
+                boxSizing: "border-box",
+              }}
+            >
+              <DataGrid
+                rows={users}
+                columns={columns}
+                getRowId={(row) => row.userId}
+                disableRowSelectionOnClick
+                columnBuffer={0}
+                columnThreshold={0}
+              />
+            </Box>
+          </Paper>
+        </Box>
+      </Box>
       {/* Popup d'ajout d'utilisateur */}
       <AddUserDialog
         open={openAddUser}

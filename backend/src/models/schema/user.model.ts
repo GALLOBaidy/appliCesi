@@ -5,6 +5,7 @@ import {
   integer,
   text,
   date,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { userExercice } from "./userExercice.model";
@@ -31,6 +32,7 @@ export const users = pgTable("users", {
 
   // Rôle
   role: varchar("role").notNull().default("user"),
+  isActive: boolean("isActive").notNull().default(true),
 
   // Date d'inscription
   registrationDate: date("registration_date", { mode: "date" }),

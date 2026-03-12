@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateRole = exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
+exports.toggleAccount = exports.updateRole = exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
 const userService = __importStar(require("../services/user.service"));
 //Créer un user
 const createUser = async (req, res) => {
@@ -42,7 +42,14 @@ const createUser = async (req, res) => {
         res.status(200).json(user);
     }
     catch (err) {
-        res.status(500).json({ error: err.message });
+        if (err.message === "EMAIL_ALREADY_USED") {
+            return res.status(400).json({ error: "Cet email est déjà utilisé" });
+        }
+        if (err.message === "LOGIN_ALREADY_USED") {
+            return res.status(400).json({ error: "Ce login est déjà utilisé" });
+        }
+        console.error(err);
+        res.status(500).json({ error: "Erreur server" });
     }
 };
 exports.createUser = createUser;
@@ -71,17 +78,25 @@ const getUserById = async (req, res) => {
     }
 };
 exports.getUserById = getUserById;
-//Modifier des données
+//Modifier des données du profil
 const updateUser = async (req, res) => {
     try {
-        const updatedUser = await userService.updateUser(Number(req.params.id), req.body);
+        const userId = req.user.userId; // ID du token
+        const updatedUser = await userService.updateUser(userId, req.body);
         if (!updatedUser) {
             return res.status(404).json({ error: "User not found" });
         }
         res.status(200).json(updatedUser);
     }
     catch (err) {
-        res.status(500).json({ error: err.message });
+        if (err.message === "EMAIL_ALREADY_USED") {
+            return res.status(400).json({ error: "Cet email est déjà utilisé" });
+        }
+        if (err.message === "LOGIN_ALREADY_USED") {
+            return res.status(400).json({ error: "Ce login est déjà utilisé" });
+        }
+        console.error(err);
+        res.status(500).json({ error: "Erreur server" });
     }
 };
 exports.updateUser = updateUser;
@@ -110,3 +125,23 @@ const updateRole = async (req, res) => {
     return res.json(updated);
 };
 exports.updateRole = updateRole;
+// Désactiver un compte
+const toggleAccount = async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+        const { isActive } = req.body;
+        if (typeof isActive !== "boolean") {
+            return res.status(400).json({ message: "isActive manquant ou invalide" });
+        }
+        const updated = await userService.toggle(id, isActive);
+        if (!updated) {
+            return res.status(404).json({ message: "Compte introuvable" });
+        }
+        res.status(200).json(updated);
+    }
+    catch (e) {
+        console.error("Error toggle:", e);
+        res.status(500).json({ message: "Errerur server" });
+    }
+};
+exports.toggleAccount = toggleAccount;

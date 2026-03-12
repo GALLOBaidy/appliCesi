@@ -1,11 +1,16 @@
 import { Box, Toolbar } from "@mui/material";
 import Navbar from "../components/Navbar";
 import { Outlet, useNavigate } from "react-router-dom";
-import { logout } from "../api/admin";
+import { logout, getCurrentUser } from "../api/admin";
+import { useEffect, useState } from "react";
 
 export default function Layout() {
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(null);
 
+  useEffect(() => {
+    getCurrentUser().then((res) => setCurrentUser(res.data.user));
+  }, []);
   const handleLogout = async () => {
     try {
       await logout();
@@ -19,7 +24,7 @@ export default function Layout() {
   };
   return (
     <>
-      <Navbar onLogout={handleLogout} />
+      <Navbar onLogout={handleLogout} user={currentUser} />
       <Toolbar />
       <Box sx={{ p: 3 }}>
         <Outlet />
