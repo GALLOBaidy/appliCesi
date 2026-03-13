@@ -63,6 +63,20 @@ export default function Navbar({ onLogout, user }) {
           >
             Exercices
           </Button>
+
+          <Button
+            color="inherit"
+            component={Link}
+            to="/admin/content"
+            sx={{
+              "&:hover": {
+                backgroundColor: "rgb(255, 255, 255)",
+                color: "#0373f3",
+              },
+            }}
+          >
+            Contenus
+          </Button>
         </Box>
 
         {/* Avatar + Menu utilisateur */}

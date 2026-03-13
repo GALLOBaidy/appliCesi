@@ -1,4 +1,4 @@
-import { Box, Toolbar } from "@mui/material";
+import { Box } from "@mui/material";
 import Navbar from "../components/Navbar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { logout, getCurrentUser } from "../api/admin";
@@ -25,7 +25,6 @@ export default function Layout() {
   return (
     <>
       <Navbar onLogout={handleLogout} user={currentUser} />
-      <Toolbar />
       <Box sx={{ p: 3 }}>
         <Outlet />
       </Box>

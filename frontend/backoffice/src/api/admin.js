@@ -30,6 +30,7 @@ export const createUser = (payload) => api.post("/users", payload);
 export const updateProfil = (payload) => api.put(`/users/me`, payload);
 export const desactivate = (id, payload) =>
   api.patch(`/users/${id}/toggle`, payload);
+export const deleteUser = (id) => api.delete(`/users/${id}`);
 
 // Les exos
 export const getAllGames = () => api.get("/games");
@@ -49,3 +50,12 @@ export const removeResult = (id) => api.delete(`/user-exo/${id}`);
 export const giveUpResult = (payload) =>
   api.post("/user-exo/delete-guest", payload);
 export const addResult = (payload) => api.post("/user-exo/link-guest", payload);
+
+// Contenus
+export const getAllContent = () => api.get("/content");
+export const getOneContent = (id) => api.get(`/content/${id}`);
+export const createContent = (payload) => api.post("/content", payload);
+export const updateContent = (id, payload) =>
+  api.put(`/content/${id}`, payload);
+export const deleteContent = (id) => api.delete(`/content/${id}`);
+export const toggleContent = (id) => api.patch(`/content/${id}/toggle`);

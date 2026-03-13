@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
 import { Grid, Paper, Typography, Box } from "@mui/material";
-import { 
-  getTotalUsers, 
-  getTotalRuns, 
-  getRunsByDay, 
-  getFeelingsStats 
+import {
+  getTotalUsers,
+  getTotalRuns,
+  getRunsByDay,
+  getFeelingsStats,
+  getAllGames,
 } from "../api/admin.js";
 
 export default function Dashboard() {
   // Stocke toutes les statistiques
-  const [stats, setStats] = useState(null);
-
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalRuns: 0,
+    byDay: [],
+    feelings: [],
+    games: [],
+  });
   // Indique si les données sont en cours de chargement
   const [loading, setLoading] = useState(true);
 
@@ -19,11 +25,12 @@ export default function Dashboard() {
     (async () => {
       try {
         // Appels API en parallèle pour optimiser la vitesse
-        const [users, runs, byDay, feelings] = await Promise.all([
+        const [users, runs, byDay, feelings, games] = await Promise.all([
           getTotalUsers(),
           getTotalRuns(),
           getRunsByDay(),
           getFeelingsStats(),
+          getAllGames(),
         ]);
 
         // Mise en forme des données
@@ -32,6 +39,7 @@ export default function Dashboard() {
           totalRuns: runs.data.totalRuns,
           byDay: byDay.data,
           feelings: feelings.data,
+          games: games.data,
         });
       } catch (err) {
         console.error("Erreur Dashboard :", err);
@@ -52,7 +60,6 @@ export default function Dashboard() {
 
       {/* Grille des statistiques principales */}
       <Grid container spacing={3} justifyContent="center">
-        
         {/* Carte 1 : Utilisateurs */}
         <Grid item xs={12} sm={6} md={3}>
           <Paper
@@ -85,9 +92,28 @@ export default function Dashboard() {
             }}
           >
             <Typography variant="h3" fontWeight="bold">
-              {stats.totalRuns}
+              {stats.games.length}
             </Typography>
             <Typography>Exercices</Typography>
+          </Paper>
+        </Grid>
+
+        {/* Carte 2 : Exercices/jour */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper
+            elevation={4}
+            sx={{
+              p: 3,
+              textAlign: "center",
+              borderRadius: 3,
+              backgroundColor: "#787d2e",
+              color: "white",
+            }}
+          >
+            <Typography variant="h3" fontWeight="bold">
+              {stats.totalRuns}
+            </Typography>
+            <Typography>Total des runs</Typography>
           </Paper>
         </Grid>
 
@@ -137,7 +163,6 @@ export default function Dashboard() {
         </Typography>
 
         <Grid container spacing={3}>
-          
           {/* Détail : Exercices par jour */}
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 3, borderRadius: 3 }}>
@@ -164,7 +189,6 @@ export default function Dashboard() {
               </ul>
             </Paper>
           </Grid>
-
         </Grid>
       </Box>
     </Box>

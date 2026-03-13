@@ -11,6 +11,7 @@ const exercice_route_1 = __importDefault(require("./routes/exercice.route"));
 const userGame_route_1 = __importDefault(require("./routes/userGame.route"));
 const auth_controller_1 = require("./controllers/auth.controller");
 const stats_route_1 = __importDefault(require("./routes/stats.route"));
+const mentalHealthContent_routes_1 = __importDefault(require("./routes/mentalHealthContent.routes"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
 app.use((0, cors_1.default)());
@@ -21,6 +22,7 @@ app.use("/users", user_route_1.default);
 app.use("/games", exercice_route_1.default);
 app.use("/user-exo", userGame_route_1.default);
 app.use("/stats", stats_route_1.default);
+app.use("/content", mentalHealthContent_routes_1.default);
 app.use((err, req, res, next) => {
     console.error("🔥 ERROR:", err);
     res.status(500).json({ error: err.message });
