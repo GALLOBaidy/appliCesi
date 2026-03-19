@@ -19,7 +19,7 @@ api.interceptors.response.use(
     // Si le token est expiré ou invalide
     if (error.response?.status === 401) {
       localStorage.removeItem("adminToken");
-      globalThis.location.href = "/login";
+      globalThis.location.href = "/";
     }
 
     return Promise.reject(error);

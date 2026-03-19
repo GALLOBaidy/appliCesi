@@ -9,74 +9,52 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 
 export default function Navbar({ onLogout, user }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Les liens de navigation
+  const navItems = [
+    { label: "Dashboard", path: "/admin/dashboard" },
+    { label: "Utilisateurs", path: "/admin/users" },
+    { label: "Exercices", path: "/admin/games" },
+    { label: "Contenus", path: "/admin/content" },
+  ]
+
+  // Appliquer un style différent à l'onglet actif
+  const isActive = (path) => location.pathname.startsWith(path);
+
 
   const open = Boolean(anchorEl);
   return (
     <AppBar position="fixed" sx={{ width: "100%" }}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        {/* Liens de navigation */}
         <Box sx={{ display: "flex", gap: 2 }}>
-          <Button
-            color="inherit"
-            component={Link}
-            to="/admin/dashboard"
-            sx={{
-              "&:hover": {
-                backgroundColor: "rgb(255, 255, 255)",
-                color: "#0373f3",
-              },
-            }}
-          >
-            Dashboard
-          </Button>
-
-          <Button
-            color="inherit"
-            component={Link}
-            to="/admin/users"
-            sx={{
-              "&:hover": {
-                backgroundColor: "rgb(255, 255, 255)",
-                color: "#0373f3",
-              },
-            }}
-          >
-            Utilisateurs
-          </Button>
-
-          <Button
-            color="inherit"
-            component={Link}
-            to="/admin/games"
-            sx={{
-              "&:hover": {
-                backgroundColor: "rgb(255, 255, 255)",
-                color: "#0373f3",
-              },
-            }}
-          >
-            Exercices
-          </Button>
-
-          <Button
-            color="inherit"
-            component={Link}
-            to="/admin/content"
-            sx={{
-              "&:hover": {
-                backgroundColor: "rgb(255, 255, 255)",
-                color: "#0373f3",
-              },
-            }}
-          >
-            Contenus
-          </Button>
+        {/* Boucler sur les liens de navigation */}
+          {navItems.map((item) => (
+            <Button
+              key={item.path}
+              color="inherit"
+              component={Link}
+              to={item.path}
+              sx={{
+                backgroundColor: isActive(item.path) ? "white" : "transparent",
+                color: isActive(item.path) ? "primary.main" : "inherit",
+                fontWeight: isActive(item.path) ? "bold" : "normal",
+                borderRadius: 1,
+                "&:hover": {
+                  backgroundColor: "white",
+                  color: "primary.main",
+                },
+              }}
+            >
+              {item.label}
+            </Button>
+          ))}
         </Box>
 
         {/* Avatar + Menu utilisateur */}
