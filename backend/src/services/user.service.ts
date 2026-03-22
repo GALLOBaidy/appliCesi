@@ -81,7 +81,7 @@ export const createUser = async (data: {
         postalCode: data.postalCode,
         country: data.country,
         addressComplement: data.addressComplement,
-        role: data.role ?? "user",
+        role: data.role ?? "User",
         registrationDate: new Date(),
       })
       .returning();

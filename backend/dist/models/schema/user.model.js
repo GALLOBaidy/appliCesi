@@ -22,7 +22,7 @@ exports.users = (0, pg_core_1.pgTable)("users", {
     country: (0, pg_core_1.varchar)("country"),
     addressComplement: (0, pg_core_1.varchar)("address_complement"),
     // Rôle
-    role: (0, pg_core_1.varchar)("role").notNull().default("user"),
+    role: (0, pg_core_1.varchar)("role").notNull().default("User"),
     isActive: (0, pg_core_1.boolean)("isActive").notNull().default(true),
     // Date d'inscription
     registrationDate: (0, pg_core_1.date)("registration_date", { mode: "date" }),

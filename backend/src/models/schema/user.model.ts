@@ -31,7 +31,7 @@ export const users = pgTable("users", {
   addressComplement: varchar("address_complement"),
 
   // Rôle
-  role: varchar("role").notNull().default("user"),
+  role: varchar("role").notNull().default("User"),
   isActive: boolean("isActive").notNull().default(true),
 
   // Date d'inscription
