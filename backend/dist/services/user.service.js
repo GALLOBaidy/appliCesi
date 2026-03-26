@@ -97,7 +97,7 @@ const createUser = async (data) => {
         return result[0];
     }
     catch (error) {
-        console.error("🔥 Error during user creation:", error);
+        console.error(" Error during user creation:", error);
         throw error;
     }
 };

@@ -40,7 +40,7 @@ export default function Users() {
 
   const filteredUsers = users.filter((u) => u.userId !== currentUser?.userId);
 
-  // 🔥 Changement de rôle
+  //  Changement de rôle
   const handleRoleChange = async (id, newRole) => {
     await updateRole(id, newRole);
 
@@ -51,7 +51,7 @@ export default function Users() {
     showToast("Rôle mis à jour.");
   };
 
-  // 🔥 Activation / désactivation
+  //  Activation / désactivation
   const handleToggle = async (user) => {
     const newStatus = !user.isActive;
 
@@ -70,7 +70,7 @@ export default function Users() {
     );
   };
 
-  // 🔥 Suppression
+  //  Suppression
   const handleDelete = async (userId) => {
     await deleteUser(userId);
 

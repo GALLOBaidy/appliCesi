@@ -25,7 +25,7 @@ export default function Exercises() {
 
   const [confirmDelete, setConfirmDelete] = useState(null);
 
-  // 🔥 Toast
+  //  Toast
   const { showToast } = useToast();
 
   useEffect(() => {

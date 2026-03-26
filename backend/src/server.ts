@@ -24,7 +24,7 @@ app.use("/content", contentRoutes);
 
 
 app.use((err: any, req: any, res: any, next: any) => {
-  console.error("🔥 ERROR:", err);
+  console.error(" ERROR:", err);
   res.status(500).json({ error: err.message });
 });
 app.listen(PORT, () => {

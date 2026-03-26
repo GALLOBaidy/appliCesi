@@ -25,7 +25,7 @@ export default function ContentPage() {
   const [selected, setSelected] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
-  // 🔥 Toast
+  //  Toast
   const { showToast } = useToast();
 
   const fetchData = async () => {

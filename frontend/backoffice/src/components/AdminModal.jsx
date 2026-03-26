@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { forwardRef } from "react";
 
-// 🔥 Slide doux depuis le haut
+//  Slide doux depuis le haut
 const SlideDown = forwardRef(function SlideDown(props, ref) {
   return (
     <Slide
@@ -27,10 +27,10 @@ export default function AdminModal({ open, onClose, title, children, actions }) 
       open={open}
       fullWidth
       maxWidth="md"
-      // 🔥 API moderne MUI 6
+      //  API moderne MUI 6
       slots={{ transition: SlideDown }}
       onClose={(e, reason) => {
-        if (reason === "backdropClick") return; // ❌ bloque clic extérieur
+        if (reason === "backdropClick") return; //  bloque clic extérieur
         onClose();
       }}
       slotProps={{
@@ -38,7 +38,7 @@ export default function AdminModal({ open, onClose, title, children, actions }) 
           borderRadius: 3,
           overflow: "hidden",
 
-          // 🔥 Zoom fluide SANS remplacer le Paper
+          //  Zoom fluide SANS remplacer le Paper
           transform: open ? "scale(1)" : "scale(0.92)",
           opacity: open ? 1 : 0.8,
           transition: "transform 0.35s ease, opacity 0.35s ease",

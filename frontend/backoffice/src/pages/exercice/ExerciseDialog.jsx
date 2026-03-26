@@ -7,7 +7,7 @@ import {
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 
-// 🔥 Modal réutilisable
+//  Modal réutilisable
 import AdminModal from "../../components/AdminModal";
 
 export default function ExerciseDialog({

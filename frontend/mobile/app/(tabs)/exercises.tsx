@@ -17,7 +17,7 @@ export default function ExercisesList() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f7f7f7" }} edges={["left", "right", "bottom"]}>
-      {/* 🔥 ENTÊTE */}
+      {/*  ENTÊTE */}
       <View
         style={{
           paddingHorizontal: 20,

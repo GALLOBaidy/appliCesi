@@ -6,7 +6,7 @@ const ToastContext = createContext();
 export function ToastProvider({ children }) {
   const [toast, setToast] = useState(null);
 
-  // 🔥 Empêche la recréation de l'objet à chaque render
+  //  Empêche la recréation de l'objet à chaque render
   const showToast = useCallback((message, type = "success") => {
     setToast({ message, type });
     

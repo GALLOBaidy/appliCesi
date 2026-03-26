@@ -39,7 +39,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     null,
   );
 
-  // 🔥 Charger le user au démarrage
+  //  Charger le user au démarrage
   useEffect(() => {
     const loadUser = async () => {
       const stored = await SecureStore.getItemAsync("user");
@@ -50,13 +50,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     loadUser();
   }, []);
 
-  // 🔥 Login + persistance
+  //  Login + persistance
   const login = async (userData: User): Promise<void> => {
     setUser(userData);
     await SecureStore.setItemAsync("user", JSON.stringify(userData));
   };
 
-  // 🔥 Logout backend + suppression locale
+  //  Logout backend + suppression locale
   const logout = async (): Promise<void> => {
     try {
       await logoutUser();
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     await SecureStore.deleteItemAsync("user");
   };
 
-  // 🔥 Stabiliser la valeur du contexte
+  //  Stabiliser la valeur du contexte
   const value = useMemo(
     () => ({
       user,

@@ -14,7 +14,9 @@ export default function ExerciseDetail() {
   const [isRunning, setIsRunning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
 
-  const timerRef = useRef<any>(null);
+  const timerRef = useRef<number | null>(null);
+  const phaseIdRef = useRef(0);
+  const endTimeRef = useRef<number | null>(null);
 
   // Animation cercle
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -29,15 +31,36 @@ export default function ExerciseDetail() {
   };
 
   useEffect(() => {
+    let mounted = true;
     async function load() {
       const response = await getOneGame(id);
+      if (!mounted) return;
       setGame(response.data);
     }
     load();
+    return () => {
+      mounted = false;
+    };
   }, [id]);
 
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+
+  const clearTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    endTimeRef.current = null;
+  };
+
   const stopExercise = () => {
-    clearInterval(timerRef.current);
+    clearTimer();
     setIsRunning(false);
     setPhase(null);
     setTimeLeft(0);
@@ -51,47 +74,94 @@ export default function ExerciseDetail() {
 
     setIsRunning(true);
     setIsFinished(false);
-    setCycleLeft(game.cycle);
+    setCycleLeft(game.cycle ?? 0);
 
     runCycle(game);
   };
 
-  const runCycle = (game: any) => {
-    // Inspiration
-    setPhase("Inspiration");
-    setTimeLeft(game.inhalationDuration);
-    animateCircle(1.4, game.inhalationDuration);
+  function startPhase({
+    label,
+    duration,
+    animationScale,
+    next,
+  }: {
+    label: string;
+    duration: number;
+    animationScale: number;
+    next: () => void;
+  }) {
+    // incrémente l'id de phase pour invalider les anciens timers
+    phaseIdRef.current += 1;
+    const currentPhaseId = phaseIdRef.current;
+
+    clearTimer();
+
+    setPhase(label);
+
+    // si duration <= 0 on appelle next immédiatement
+    if (!duration || duration <= 0) {
+      setTimeLeft(0);
+      animateCircle(animationScale, Math.max(0.5, 0.5));
+      // petit délai pour laisser l'UI se mettre à jour
+      setTimeout(() => {
+        // si l'id a changé, on n'appelle pas next
+        if (phaseIdRef.current !== currentPhaseId) return;
+        next();
+      }, 50);
+      return;
+    }
+
+    setTimeLeft(duration);
+    animateCircle(animationScale, duration);
+
+    // calcule endTime et démarre un seul interval qui lit l'heure
+    endTimeRef.current = Date.now() + duration * 1000;
 
     timerRef.current = setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) {
-          clearInterval(timerRef.current);
+      // si la phase a changé, on stoppe ce timer
+      if (phaseIdRef.current !== currentPhaseId) {
+        clearTimer();
+        return;
+      }
 
-          if (game.holdDuration > 0) {
-            runHold(game);
-          } else {
-            runExhale(game);
-          }
+      const now = Date.now();
+      const remainingMs = (endTimeRef.current ?? now) - now;
+      const remainingSec = Math.max(0, Math.ceil(remainingMs / 1000));
+      setTimeLeft(remainingSec);
+
+      if (remainingSec <= 0) {
+        // verrouille et appelle next
+        clearTimer();
+        // protège contre double appel si next déclenche une nouvelle phase immédiatement
+        if (phaseIdRef.current === currentPhaseId) {
+          next();
         }
-        return t - 1;
-      });
-    }, 1000);
+      }
+    }, 200); // 200ms pour une UI réactive sans surcharger le CPU
+  }
+
+  const runCycle = (game: any) => {
+    startPhase({
+      label: "Inspiration",
+      duration: game.inhalationDuration,
+      animationScale: 1.4,
+      next: () => {
+        if (game.holdDuration > 0) {
+          runHold(game);
+        } else {
+          runExhale(game);
+        }
+      },
+    });
   };
 
   const runHold = (game: any) => {
-    setPhase("Blocage");
-    setTimeLeft(game.holdDuration);
-    animateCircle(1.4, game.holdDuration);
-
-    timerRef.current = setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) {
-          clearInterval(timerRef.current);
-          runExhale(game);
-        }
-        return t - 1;
-      });
-    }, 1000);
+    startPhase({
+      label: "Blocage",
+      duration: game.holdDuration,
+      animationScale: 1.4,
+      next: () => runExhale(game),
+    });
   };
 
   function handleCycleEnd(game: any) {
@@ -104,26 +174,19 @@ export default function ExerciseDetail() {
         return 0;
       }
 
+      // lance le cycle suivant
       runCycle(game);
       return c - 1;
     });
   }
 
   const runExhale = (game: any) => {
-    setPhase("Expiration");
-    setTimeLeft(game.exhalationDuration);
-    animateCircle(0.8, game.exhalationDuration);
-
-    timerRef.current = setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) {
-          clearInterval(timerRef.current);
-
-          handleCycleEnd(game);
-        }
-        return t - 1;
-      });
-    }, 1000);
+    startPhase({
+      label: "Expiration",
+      duration: game.exhalationDuration,
+      animationScale: 0.8,
+      next: () => handleCycleEnd(game),
+    });
   };
 
   if (!game) return null;
@@ -214,7 +277,7 @@ export default function ExerciseDetail() {
           <Text style={{ marginTop: 20, color: "#666", fontSize: 16 }}>
             Cycles restants : {cycleLeft}
           </Text>
-          {/* 🔥 Bouton Terminé sous le cercle */}
+          {/*  Bouton Terminé sous le cercle */}
           {isFinished && (
             <TouchableOpacity
               onPress={() => router.push(`/exercises/${id}/feeling`)}

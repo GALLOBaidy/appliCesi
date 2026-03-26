@@ -24,7 +24,7 @@ app.use("/user-exo", userGame_route_1.default);
 app.use("/stats", stats_route_1.default);
 app.use("/content", mentalHealthContent_routes_1.default);
 app.use((err, req, res, next) => {
-    console.error("🔥 ERROR:", err);
+    console.error(" ERROR:", err);
     res.status(500).json({ error: err.message });
 });
 app.listen(PORT, () => {
