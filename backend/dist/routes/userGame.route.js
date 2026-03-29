@@ -44,7 +44,7 @@ router.post("/", auth_middleware_1.optionalAuth, ctrl.create);
 router.get("/guest/:guest", ctrl.getByGuest);
 // get current user's saved runs
 router.get("/me", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, ctrl.getByUser);
-// get by id (public)
+// get by id 
 router.get("/:id", ctrl.getById);
 // update / delete (auth optional but checked in controller)
 router.delete("/:id", auth_middleware_1.optionalAuth, ctrl.remove);

@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toggleExerciseStatusController = exports.deleteGame = exports.updateGame = exports.getGameById = exports.getAllGames = exports.createGame = void 0;
+exports.getActive = exports.toggleExerciseStatusController = exports.deleteGame = exports.updateGame = exports.getGameById = exports.getAllGames = exports.createGame = void 0;
 const exercicesService = __importStar(require("../services/exercices.services"));
 // Créer un exercice
 const createGame = async (req, res) => {
@@ -114,3 +114,8 @@ const toggleExerciseStatusController = async (req, res) => {
     }
 };
 exports.toggleExerciseStatusController = toggleExerciseStatusController;
+const getActive = async (req, res) => {
+    const data = await exercicesService.getActiveContent();
+    res.json(data);
+};
+exports.getActive = getActive;

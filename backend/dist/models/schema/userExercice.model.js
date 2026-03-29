@@ -26,7 +26,7 @@ exports.userExercice = (0, pg_core_1.pgTable)("user_exercice", {
         .$type()
         .default(null),
     feeling: (0, exports.FeelingEnum)("feeling").notNull(),
-    dateCompletion: (0, pg_core_1.date)("date_completion").notNull(),
+    dateCompletion: (0, pg_core_1.timestamp)("date_completion").notNull(),
 });
 exports.userExerciceRelations = (0, drizzle_orm_1.relations)(exports.userExercice, ({ one }) => ({
     user: one(user_model_1.users, {

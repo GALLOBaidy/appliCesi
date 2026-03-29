@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toggleExerciseStatusService = exports.deleteGame = exports.updateGame = exports.getGameById = exports.getAllGames = exports.createGame = void 0;
+exports.getActiveContent = exports.toggleExerciseStatusService = exports.deleteGame = exports.updateGame = exports.getGameById = exports.getAllGames = exports.createGame = void 0;
 const models_1 = require("../models");
 const exercice_model_1 = require("../models/schema/exercice.model");
 const drizzle_orm_1 = require("drizzle-orm");
@@ -71,3 +71,8 @@ const toggleExerciseStatusService = async (id) => {
     return result[0] || null;
 };
 exports.toggleExerciseStatusService = toggleExerciseStatusService;
+// Récupérer que les exos actif
+const getActiveContent = async () => {
+    return models_1.db.select().from(exercice_model_1.exercices).where((0, drizzle_orm_1.eq)(exercice_model_1.exercices.status, true));
+};
+exports.getActiveContent = getActiveContent;

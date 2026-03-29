@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 
 // Récupérer tous les contenus
 export const getAllContent = () => {
-    return db.select().from(mentalHealthContent);
+  return db.select().from(mentalHealthContent);
 };
 
 // Récupérer un contenu
@@ -14,7 +14,7 @@ export const getContentById = async (id: number) => {
     .from(mentalHealthContent)
     .where(eq(mentalHealthContent.id, id));
 
-    return rows[0] ?? null
+  return rows[0] ?? null;
 };
 
 // Créer un contenu

@@ -8,7 +8,8 @@ import {
 } from "react-native";
 import { useRouter, Href } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
-import { loginUser } from "../../src/api/routes";
+import { loginUser, saveMyResult } from "../../src/api/routes";
+import { getGuestId } from "../../src/utils/guest";
 
 export default function Login() {
   const router = useRouter();
@@ -24,22 +25,27 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // Appel API réel
-      const response = await loginUser(identifier, password);
+      // Appel API
+      const res = await loginUser(identifier, password);
 
-      // Ton backend renvoie sûrement response.data
-      const { user } = response.data;
+      // Le backend renvoie : { user, token }
+      const { user, token } = res.data;
 
-      // Vérification si le compte est actif
+      // Vérifier si le compte est actif
       if (!user.isActive) {
         setError("Votre compte n'est pas actif");
         setLoading(false);
         return;
       }
 
-      // Connexion
-      await login(user);
+      // Connexion + stockage du token
+      await login(user, token);
 
+      const guestId = await getGuestId();
+
+      await saveMyResult({ guestId });
+
+      // Redirection
       if (redirectAfterLogin) {
         router.replace(redirectAfterLogin);
       } else {
@@ -47,6 +53,7 @@ export default function Login() {
       }
     } catch (err: any) {
       console.log("Erreur login:", err?.response?.data || err?.message);
+
       if (err?.response?.data?.error) {
         setError(err.response.data.error);
       } else if (err?.message) {

@@ -15,7 +15,13 @@ router.post(
   requireRole("Admin"),
   exerciceController.createGame,
 );
-router.get("/", exerciceController.getAllGames);
+router.get(
+  "/",
+  requireAuth,
+  requireRole("Admin"),
+  exerciceController.getAllGames,
+);
+router.get("/active-games", exerciceController.getActive);
 router.get("/:id", exerciceController.getGameById);
 router.put("/:id", authMiddleware, requireAuth, exerciceController.updateGame);
 router.delete(

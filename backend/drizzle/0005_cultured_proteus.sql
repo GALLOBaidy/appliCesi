@@ -1,0 +1,1 @@
+ALTER TABLE "user_exercice" ALTER COLUMN "date_completion" SET DATA TYPE timestamp;

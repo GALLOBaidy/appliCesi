@@ -9,19 +9,12 @@ import {
 import { Href } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { logoutUser } from "../api/routes";
-
-export interface User {
-  userId: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  login: string;
-  role: string;
-}
+import { User } from "../types/User";
 
 interface AuthContextType {
   user: User | null;
-  login: (userData: User) => Promise<void>;
+  guestId: string | null;
+  login: (userData: User, token: string) => Promise<void>;
   logout: () => Promise<void>;
   redirectAfterLogin: Href | null;
   setRedirectAfterLogin: (path: Href | null) => void;
@@ -35,11 +28,12 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
+  const [guestId, setGuestId] = useState<string | null>(null);
   const [redirectAfterLogin, setRedirectAfterLogin] = useState<Href | null>(
     null,
   );
 
-  //  Charger le user au démarrage
+  // Charger le user au démarrage
   useEffect(() => {
     const loadUser = async () => {
       const stored = await SecureStore.getItemAsync("user");
@@ -50,13 +44,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
     loadUser();
   }, []);
 
-  //  Login + persistance
-  const login = async (userData: User): Promise<void> => {
+  // Générer un guestId si pas connecté
+  useEffect(() => {
+    if (!user && !guestId) {
+      const newGuest = "guest_" + Math.random().toString(36).substring(2, 10);
+      setGuestId(newGuest);
+    }
+  }, [user, guestId]);
+
+  // Login
+  const login = async (userData: User, token: string): Promise<void> => {
     setUser(userData);
     await SecureStore.setItemAsync("user", JSON.stringify(userData));
+    await SecureStore.setItemAsync("userToken", token);
   };
 
-  //  Logout backend + suppression locale
+  // Logout
   const logout = async (): Promise<void> => {
     try {
       await logoutUser();
@@ -67,18 +70,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null);
     setRedirectAfterLogin(null);
     await SecureStore.deleteItemAsync("user");
+    await SecureStore.deleteItemAsync("userToken");
   };
 
-  //  Stabiliser la valeur du contexte
+  // Valeur du contexte
   const value = useMemo(
     () => ({
       user,
+      guestId,
       login,
       logout,
       redirectAfterLogin,
       setRedirectAfterLogin,
     }),
-    [user, redirectAfterLogin],
+    [user, guestId, redirectAfterLogin],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

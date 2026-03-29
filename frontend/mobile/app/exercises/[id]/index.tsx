@@ -33,7 +33,9 @@ export default function ExerciseDetail() {
   useEffect(() => {
     let mounted = true;
     async function load() {
-      const response = await getOneGame(id);
+      const idValue = Array.isArray(id) ? id[0] : id;
+      const numId = typeof idValue === 'string' ? Number.parseInt(idValue, 10) : idValue;
+      const response = await getOneGame(numId);
       if (!mounted) return;
       setGame(response.data);
     }

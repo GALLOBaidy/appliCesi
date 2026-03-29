@@ -14,7 +14,7 @@ router.get("/guest/:guest", ctrl.getByGuest);
 // get current user's saved runs
 router.get("/me", authMiddleware, requireAuth, ctrl.getByUser);
 
-// get by id (public)
+// get by id 
 router.get("/:id", ctrl.getById);
 
 // update / delete (auth optional but checked in controller)

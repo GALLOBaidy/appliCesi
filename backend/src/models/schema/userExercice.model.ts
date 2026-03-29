@@ -4,7 +4,7 @@ import {
   serial,
   integer,
   varchar,
-  date,
+  timestamp,
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
@@ -32,7 +32,7 @@ export const userExercice = pgTable("user_exercice", {
     .$type<string | null>()
     .default(null),
   feeling: FeelingEnum("feeling").notNull(),
-  dateCompletion: date("date_completion").notNull(),
+  dateCompletion: timestamp("date_completion").notNull(),
 });
 
 export const userExerciceRelations = relations(userExercice, ({ one }) => ({

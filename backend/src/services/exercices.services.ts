@@ -100,3 +100,8 @@ export const toggleExerciseStatusService = async (id: number) => {
 
   return result[0] || null;
 };
+
+// Récupérer que les exos actif
+export const getActiveContent = async () => {
+  return db.select().from(exercices).where(eq(exercices.status, true));
+};

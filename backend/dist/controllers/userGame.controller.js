@@ -40,8 +40,12 @@ const FEELINGS = ["good", "neutral", "bad", "anxious", "relaxed"];
 const isFeeling = (v) => typeof v === "string" && FEELINGS.includes(v);
 const create = async (req, res) => {
     try {
-        const { exerciceId, feeling, dateCompletion, guestId } = req.body;
-        const userId = req.user?.id ?? null;
+        const userId = req.user?.userId ?? null;
+        const guestId = req.body.guestId ?? null;
+        if (!userId && !guestId) {
+            return res.status(400).json({ message: "Il faut être connecté ou avoir un guestId" });
+        }
+        const { exerciceId, feeling, dateCompletion } = req.body;
         // validation minimale
         if (exerciceId == null || !feeling || !dateCompletion) {
             return res.status(400).json({ message: "Missing fields" });
@@ -55,7 +59,7 @@ const create = async (req, res) => {
             exerciceId,
             guestId: guestId ?? null,
             feeling,
-            dateCompletion,
+            dateCompletion: new Date(dateCompletion),
         });
         return res.status(201).json(row);
     }

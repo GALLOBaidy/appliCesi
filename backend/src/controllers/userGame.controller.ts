@@ -10,8 +10,13 @@ const isFeeling = (v: unknown): v is Feeling =>
 
 export const create = async (req: Request, res: Response) => {
   try {
-    const { exerciceId, feeling, dateCompletion, guestId } = req.body;
-    const userId = (req as any).user?.id ?? null;
+    const userId = (req as any).user?.userId ?? null;
+    const guestId = req.body.guestId ?? null;
+
+    if (!userId && !guestId) {
+      return res.status(400).json({ message: "Il faut être connecté ou avoir un guestId" });
+    }
+    const { exerciceId, feeling, dateCompletion } = req.body;
 
     // validation minimale
     if (exerciceId == null || !feeling || !dateCompletion) {
@@ -28,7 +33,7 @@ export const create = async (req: Request, res: Response) => {
       exerciceId,
       guestId: guestId ?? null,
       feeling,
-      dateCompletion,
+      dateCompletion: new Date(dateCompletion),
     });
 
     return res.status(201).json(row);

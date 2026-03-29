@@ -82,3 +82,8 @@ export const toggleExerciseStatusController = async (
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
+export const getActive = async (req: Request, res: Response) => {
+  const data = await exercicesService.getActiveContent();
+  res.json(data);
+};
