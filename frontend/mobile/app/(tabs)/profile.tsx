@@ -88,7 +88,7 @@ export default function Profile() {
               }}
             >
               <Text style={{ fontSize: 18, fontWeight: "600" }}>
-                Exercice #{r.exerciceId}
+                Exercice "{r.exerciceTitle}"
               </Text>
 
               <Text style={{ marginTop: 5 }}>

@@ -1,8 +1,9 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import * as SecureStore from "expo-secure-store";
+import { router } from "expo-router";
 
 export const api = axios.create({
-  baseURL: "http://192.168.1.10:3000",
+  baseURL: "http://10.176.138.118:3000",
   headers: {
     "Content-Type": "application/json",
   },
@@ -31,8 +32,14 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
+    // Token plus valide 
     if (error.response?.status === 401) {
+      // On supprime le user et token stocké
       await SecureStore.deleteItemAsync("userToken");
+      await SecureStore.deleteItemAsync("user");
+
+      // Redirection vers login 
+      router.replace("/(public)/login");
     }
     throw error;
   }
