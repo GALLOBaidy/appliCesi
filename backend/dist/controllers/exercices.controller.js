@@ -115,7 +115,13 @@ const toggleExerciseStatusController = async (req, res) => {
 };
 exports.toggleExerciseStatusController = toggleExerciseStatusController;
 const getActive = async (req, res) => {
-    const data = await exercicesService.getActiveContent();
-    res.json(data);
+    try {
+        const data = await exercicesService.getActiveContent();
+        return res.json(data);
+    }
+    catch (err) {
+        console.error("Erreur get active exercices :", err);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
 };
 exports.getActive = getActive;

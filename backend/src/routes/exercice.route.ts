@@ -17,6 +17,7 @@ router.post(
 );
 router.get(
   "/",
+  authMiddleware,
   requireAuth,
   requireRole("Admin"),
   exerciceController.getAllGames,

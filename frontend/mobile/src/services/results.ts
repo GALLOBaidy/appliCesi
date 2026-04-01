@@ -1,25 +1,25 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getGuestId } from "../utils/guest";
+import * as SecureStore from "expo-secure-store";
 import { saveOneResult } from "../api/routes";
 
 export const saveResultInProfile = async (payload: any) => {
-  const token = await AsyncStorage.getItem("token");
+  const token = await SecureStore.getItemAsync("userToken");
 
   if (!token) {
-    // MODE INVITÉ
-    const guestId = await getGuestId();
+    // MODE INVITÉ → on stocke localement
+    const existing = JSON.parse(
+      (await AsyncStorage.getItem("pendingResults")) || "[]",
+    );
 
-    console.log(payload);
-    return saveOneResult({
-      ...payload,
-      guestId,
-    });
-    
+    existing.push(payload);
+
+    await AsyncStorage.setItem("pendingResults", JSON.stringify(existing));
+
+    return { local: true };
   }
-
   // MODE CONNECTÉ
   return saveOneResult({
     ...payload,
-    guestId: null,
+    // guestId: null,
   });
 };

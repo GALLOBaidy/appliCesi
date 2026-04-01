@@ -1,14 +1,19 @@
-import { View, Text, Button, ScrollView } from "react-native";
+import { View, Text, Button, ScrollView, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { useEffect, useState } from "react";
-import { getMyResult } from "../../src/api/routes";
+import {
+  getMyResult,
+  getOneResult,
+  deleteOneResult,
+} from "../../src/api/routes";
 import { FEELINGS } from "../../src/types/feelings";
 import { UserExercice } from "../../src/types/UserExercices";
 
 export default function Profile() {
   const { user, logout } = useAuth();
   const [results, setResults] = useState<UserExercice[]>([]);
+  const [toDelete, setToDelete] = useState<number | null>(null);
 
   // Charger l'historique du user
   useEffect(() => {
@@ -67,7 +72,10 @@ export default function Profile() {
         Historique de mes exercices
       </Text>
 
-      <ScrollView style={{ marginTop: 20 }}>
+      <ScrollView
+        style={{ marginTop: 20 }}
+        pointerEvents={toDelete === null ? "auto" : "none"}
+      >
         {results.length === 0 && (
           <Text style={{ textAlign: "center", color: "#666" }}>
             Aucun exercice enregistré pour le moment.
@@ -85,8 +93,21 @@ export default function Profile() {
                 backgroundColor: "#f4f4f4",
                 borderRadius: 10,
                 marginBottom: 15,
+                position: "relative",
               }}
             >
+              <TouchableOpacity
+                onPress={() => setToDelete(r.id)}
+                style={{
+                  position: "absolute",
+                  right: 10,
+                  top: 10,
+                  padding: 5,
+                }}
+              >
+                <Text style={{ fontSize: 20 }}>🗑️supp</Text>
+              </TouchableOpacity>
+
               <Text style={{ fontSize: 18, fontWeight: "600" }}>
                 Exercice "{r.exerciceTitle}"
               </Text>
@@ -105,6 +126,70 @@ export default function Profile() {
           );
         })}
       </ScrollView>
+      {toDelete !== null && (
+        <View
+          pointerEvents="auto"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 20,
+            zIndex: 10,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 20,
+              borderRadius: 10,
+              width: "80%",
+            }}
+          >
+            <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 20 }}>
+              Supprimer ce résultat ?
+            </Text>
+
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <TouchableOpacity
+                onPress={() => setToDelete(null)}
+                style={{
+                  padding: 10,
+                  backgroundColor: "#ccc",
+                  borderRadius: 8,
+                  width: "45%",
+                }}
+              >
+                <Text style={{ textAlign: "center" }}>Annuler</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={async () => {
+                  await deleteOneResult(toDelete);
+                  setResults(results.filter((r) => r.id !== toDelete));
+                  setToDelete(null);
+                }}
+                style={{
+                  padding: 10,
+                  backgroundColor: "#E74C3C",
+                  borderRadius: 8,
+                  width: "45%",
+                }}
+              >
+                <Text style={{ textAlign: "center", color: "white" }}>
+                  Supprimer
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 }

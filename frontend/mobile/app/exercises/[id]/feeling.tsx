@@ -1,24 +1,12 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, View, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { useAuth } from "../../../src/context/AuthContext";
 import { FEELINGS } from "../../../src/types/feelings";
 
 export default function FeelingScreen() {
   const { id } = useLocalSearchParams();
-  const { user, /*guestId*/ } = useAuth();
 
   const handleFeelingSelect = (feeling: any) => {
-    // Si pas connecté → redirection vers login
-    if (!user) {
-      router.push(
-        `/login?redirect=/exercises/${id}/save&feeling=${feeling}
-        `,
-        // &guest=${guestId}
-      );
-      return;
-    }
-
     // Si connecté → enregistrement direct
     router.push(`/exercises/${id}/save?feeling=${feeling}`);
   };

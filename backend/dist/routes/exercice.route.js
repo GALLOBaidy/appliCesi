@@ -38,7 +38,7 @@ const exerciceController = __importStar(require("../controllers/exercices.contro
 const auth_middleware_1 = require("../middlewares/auth.middleware");
 const router = (0, express_1.Router)();
 router.post("/", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), exerciceController.createGame);
-router.get("/", auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), exerciceController.getAllGames);
+router.get("/", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), exerciceController.getAllGames);
 router.get("/active-games", exerciceController.getActive);
 router.get("/:id", exerciceController.getGameById);
 router.put("/:id", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, exerciceController.updateGame);

@@ -13,13 +13,12 @@ export default function SaveFeeling() {
                 exerciceId: Number(id),
                 feeling, dateCompletion: new Date().toISOString(),
             };
-            console.log(payload);
             
             await saveResultInProfile(payload);
             if (user) {
                 router.push("/profile");
             } else {
-                router.push("/guest-summary");
+                router.push("/exercises");
             }
         }
 

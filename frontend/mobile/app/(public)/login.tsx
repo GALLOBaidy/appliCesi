@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import {
   View,
@@ -8,8 +9,7 @@ import {
 } from "react-native";
 import { useRouter, Href } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
-import { loginUser, saveMyResult } from "../../src/api/routes";
-import { getGuestId } from "../../src/utils/guest";
+import { loginUser, saveOneResult } from "../../src/api/routes";
 
 export default function Login() {
   const router = useRouter();
@@ -41,10 +41,21 @@ export default function Login() {
       // Connexion + stockage du token
       await login(user, token);
 
-      const guestId = await getGuestId();
+      const pending = JSON.parse(
+        (await AsyncStorage.getItem("pendingResults")) || "[]",
+      );
 
-      await saveMyResult({ guestId });
-
+      if (pending.length > 0) {
+        try {
+          for (const r of pending) {
+            await saveOneResult(r);
+          }
+          await AsyncStorage.removeItem("pendingResults");
+        } catch (e) {
+          console.log("Erreur en envoyant les pendingResults :", e);
+          // On garde pendingResults pour réessayer plus tard
+        }
+      }
       // Redirection
       if (redirectAfterLogin) {
         router.replace(redirectAfterLogin);
