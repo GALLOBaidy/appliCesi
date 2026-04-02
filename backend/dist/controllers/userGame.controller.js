@@ -95,7 +95,7 @@ exports.getByGuest = getByGuest;
 // Supprimer un résultat
 const remove = async (req, res) => {
     const id = Number(req.params.id);
-    const userId = req.user?.id ?? null;
+    const userId = req.user?.userId ?? null;
     const existing = await svc.getById(id);
     if (!existing)
         return res.status(404).json({ message: "Not found" });

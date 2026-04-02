@@ -39,10 +39,10 @@ export const getOneGame = (id: number) =>
 // ----------------------
 
 export const getCurrentUser = () =>
-  api.get<User>("/users/me");
+  api.get<{ user: User }>("/users/me");
 
-export const createUser = (payload: Partial<User>) =>
-  api.post<User>("/users", payload);
+export const createUser = (payload: any) =>
+  api.post<{ user: User; token: string }>("/users", payload);
 
 export const updateProfil = (payload: Partial<User>) =>
   api.put<User>(`/users/me`, payload);

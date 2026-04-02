@@ -11,6 +11,7 @@ import {
 import { useRouter } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { createUser } from "../../src/api/routes";
+import { User } from "../../src/types/User";
 
 export default function Register() {
   const router = useRouter();
@@ -27,6 +28,17 @@ export default function Register() {
   const handleRegister = async () => {
     setError(null);
 
+    // Vérification des champs vides
+  if (
+    !firstName.trim() ||
+    !lastName.trim() ||
+    !email.trim() ||
+    !loginName.trim() ||
+    !password.trim()
+  ) {
+    setError("Veuillez remplir tous les champs");
+    return;
+  }
     try {
       const payload = {
         firstName,
@@ -37,9 +49,10 @@ export default function Register() {
       };
 
       const response = await createUser(payload);
-      const newUser = response.data;
+      const data = response.data as { user: User; token: string };
 
-      await login(newUser);
+      // Connexion automatique après inscription
+      await login(data.user, data.token);
 
       router.replace("/(tabs)/profile");
     } catch (e: any) {

@@ -1,11 +1,25 @@
 import * as userService from "../services/user.service";
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 
 //Créer un user
 export const createUser = async (req: Request, res: Response) => {
   try {
     const user = await userService.createUser(req.body);
-    res.status(200).json(user);
+    // Générer un token comme dans le login
+    const token = jwt.sign(
+      { userId: user.userId, role: user.role },
+      process.env.JWT_SECRET!,
+      { expiresIn: "2h" },
+    );
+
+    // Retirer le password avant de renvoyer
+    const { password: _, ...userWithoutPassword } = user;
+
+    return res.status(200).json({
+      user: userWithoutPassword,
+      token,
+    });
   } catch (err: any) {
     if (err.message === "EMAIL_ALREADY_USED") {
       return res.status(400).json({ error: "Cet email est déjà utilisé" });

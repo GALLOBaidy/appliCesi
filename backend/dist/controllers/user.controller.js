@@ -32,14 +32,25 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.toggleAccount = exports.updateRole = exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
 const userService = __importStar(require("../services/user.service"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 //Créer un user
 const createUser = async (req, res) => {
     try {
         const user = await userService.createUser(req.body);
-        res.status(200).json(user);
+        // Générer un token comme dans le login
+        const token = jsonwebtoken_1.default.sign({ userId: user.userId, role: user.role }, process.env.JWT_SECRET, { expiresIn: "2h" });
+        // Retirer le password avant de renvoyer
+        const { password: _, ...userWithoutPassword } = user;
+        return res.status(200).json({
+            user: userWithoutPassword,
+            token,
+        });
     }
     catch (err) {
         if (err.message === "EMAIL_ALREADY_USED") {

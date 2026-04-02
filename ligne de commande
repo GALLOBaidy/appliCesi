@@ -12,6 +12,8 @@ docker compose up -d
 npm install jsonwebtoken
 npm install -D @types/jsonwebtoken
 npm install -D vitest supertest ts-node @types/supertest
+npm install react-native-toast-message
+expo install @expo/vector-icons
 
 "login": "johnDoes",
 "email": "john.doe@example.com",

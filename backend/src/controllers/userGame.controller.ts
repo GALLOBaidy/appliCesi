@@ -66,7 +66,7 @@ export const getByGuest = async (req: Request, res: Response) => {
 // Supprimer un résultat
 export const remove = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
-  const userId = (req as any).user?.id ?? null;
+  const userId = (req as any).user?.userId ?? null;
   const existing = await svc.getById(id);
   if (!existing) return res.status(404).json({ message: "Not found" });
   if (existing.userId && existing.userId !== userId)

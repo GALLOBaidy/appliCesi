@@ -1,5 +1,4 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
-import * as SecureStore from "expo-secure-store";
+import axios from "axios";
 import { router } from "expo-router";
 
 export const api = axios.create({
@@ -10,37 +9,16 @@ export const api = axios.create({
 });
 
 // ----------------------
-// REQUEST INTERCEPTOR
-// ----------------------
-api.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    const token = await SecureStore.getItemAsync("userToken");
-
-    if (token) {
-      // Axios v1 : headers est un AxiosHeaders
-      config.headers.set("Authorization", `Bearer ${token}`);
-    }
-
-    return config;
-  },
-  (error: AxiosError) => Promise.reject(error)
-);
-
-// ----------------------
 // RESPONSE INTERCEPTOR
 // ----------------------
 api.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) => {
-    // Token plus valide 
-    if (error.response?.status === 401) {
-      // On supprime le user et token stocké
-      await SecureStore.deleteItemAsync("userToken");
-      await SecureStore.deleteItemAsync("user");
-
-      // Redirection vers login 
+  async (error) => {
+    // Token expiré ou invalide
+    if (error.response?.status === 401 && error.config.url !== "/login") {
+      // Redirection vers login
       router.replace("/(public)/login");
     }
     throw error;
-  }
+  },
 );

@@ -22,6 +22,12 @@ export default function Login() {
 
   const handleLogin = async () => {
     setError(null);
+
+    // Vérification des champs vides
+    if (!identifier.trim() || !password.trim()) {
+      setError("Veuillez remplir tous les champs");
+      return;
+    }
     setLoading(true);
 
     try {
@@ -91,7 +97,10 @@ export default function Login() {
         placeholder="Email ou identifiant"
         placeholderTextColor="#aaa"
         value={identifier}
-        onChangeText={setIdentifier}
+        onChangeText={(text) => {
+          setIdentifier(text);
+          setError(null);
+        }}
         autoCapitalize="none"
       />
 
@@ -101,11 +110,13 @@ export default function Login() {
         placeholderTextColor="#aaa"
         secureTextEntry
         value={password}
-        onChangeText={setPassword}
+        onChangeText={(text) => {
+          setPassword(text);
+          setError(null);
+        }}
       />
 
-      {error && <Text style={styles.error}>{error}</Text>}
-
+      {error !== null && <Text style={styles.error}>{error}</Text>}
       <TouchableOpacity
         style={[styles.button, loading && { opacity: 0.6 }]}
         onPress={handleLogin}

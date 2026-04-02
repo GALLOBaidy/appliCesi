@@ -17,7 +17,7 @@ export default function ContentDetail() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getOneContent(id)
+    getOneContent(Number(id))
       .then((res) => setContent(res.data))
       .finally(() => setLoading(false));
   }, [id]);

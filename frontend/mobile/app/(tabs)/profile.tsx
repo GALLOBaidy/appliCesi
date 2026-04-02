@@ -1,29 +1,32 @@
-import { View, Text, Button, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  FlatList,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { router } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { useEffect, useState } from "react";
-import {
-  getMyResult,
-  getOneResult,
-  deleteOneResult,
-} from "../../src/api/routes";
+import { getMyResult, deleteOneResult } from "../../src/api/routes";
 import { FEELINGS } from "../../src/types/feelings";
 import { UserExercice } from "../../src/types/UserExercices";
+import Toast from "react-native-toast-message";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Profile() {
   const { user, logout } = useAuth();
   const [results, setResults] = useState<UserExercice[]>([]);
   const [toDelete, setToDelete] = useState<number | null>(null);
 
-  // Charger l'historique du user
+  // Charger l'historique du user à l'ouverture du profil
   useEffect(() => {
     async function load() {
       const res = await getMyResult();
       setResults(res.data);
     }
-    if (user) {
-      load();
-    }
+    if (user) load();
   }, [user]);
 
   // Si pas connecté → écran invité
@@ -48,19 +51,71 @@ export default function Profile() {
     router.replace("/(tabs)/home");
   };
 
+  const renderItem = ({ item }: { item: UserExercice }) => {
+    const feelingInfo = FEELINGS.find((f) => f.value === item.feeling);
+
+    return (
+      <View
+        style={{
+          padding: 15,
+          backgroundColor: "#f4f4f4",
+          borderRadius: 10,
+          marginBottom: 15,
+          position: "relative",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 18, fontWeight: "600" }}>
+            Exercice "{item.exerciceTitle}"
+          </Text>
+
+          <Text style={{ marginTop: 5 }}>
+            Ressenti :{" "}
+            <Text style={{ fontWeight: "700", color: feelingInfo?.color }}>
+              {feelingInfo?.label}
+            </Text>
+          </Text>
+
+          <Text style={{ marginTop: 5, color: "#666" }}>
+            Fait le : {new Date(item.dateCompletion).toLocaleDateString()}
+          </Text>
+        </View>
+
+        {/* Bouton supprimer */}
+        <Pressable
+          onPress={() => setToDelete(item.id)}
+          hitSlop={20}
+          android_disableSound={true}
+          style={{
+            padding: 10,
+          }}
+        >
+          <Text style={{ fontSize: 18 }}>🗑️ </Text>
+        </Pressable>
+      </View>
+    );
+  };
+
   return (
     <View style={{ flex: 1, padding: 20 }}>
-      {/* Header */}
       <Text style={{ fontSize: 24, fontWeight: "700", textAlign: "center" }}>
         Bienvenue {user.firstName}
       </Text>
 
-      {/* Boutons */}
+      <TouchableOpacity
+        onPress={() => router.push("/(user)/Profil")}
+        style={{ position: "absolute", top: 40, right: 20 }}
+      >
+        <Ionicons name="person-circle-outline" size={28} color="#4A90E2" />
+      </TouchableOpacity>
+
       <View style={{ marginTop: 20, alignItems: "center" }}>
         <Button title="Se déconnecter" color="#E74C3C" onPress={handleLogout} />
       </View>
 
-      {/* Historique */}
       <Text
         style={{
           marginTop: 30,
@@ -72,63 +127,22 @@ export default function Profile() {
         Historique de mes exercices
       </Text>
 
-      <ScrollView
-        style={{ marginTop: 20 }}
-        pointerEvents={toDelete === null ? "auto" : "none"}
-      >
-        {results.length === 0 && (
+      <FlatList
+        data={results}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        contentContainerStyle={{ paddingTop: 20 }}
+        removeClippedSubviews={false}
+        ListEmptyComponent={
           <Text style={{ textAlign: "center", color: "#666" }}>
             Aucun exercice enregistré pour le moment.
           </Text>
-        )}
+        }
+      />
 
-        {results.map((r) => {
-          const feelingInfo = FEELINGS.find((f) => f.value === r.feeling);
-
-          return (
-            <View
-              key={r.id}
-              style={{
-                padding: 15,
-                backgroundColor: "#f4f4f4",
-                borderRadius: 10,
-                marginBottom: 15,
-                position: "relative",
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => setToDelete(r.id)}
-                style={{
-                  position: "absolute",
-                  right: 10,
-                  top: 10,
-                  padding: 5,
-                }}
-              >
-                <Text style={{ fontSize: 20 }}>🗑️supp</Text>
-              </TouchableOpacity>
-
-              <Text style={{ fontSize: 18, fontWeight: "600" }}>
-                Exercice "{r.exerciceTitle}"
-              </Text>
-
-              <Text style={{ marginTop: 5 }}>
-                Ressenti :{" "}
-                <Text style={{ fontWeight: "700", color: feelingInfo?.color }}>
-                  {feelingInfo?.label}
-                </Text>
-              </Text>
-
-              <Text style={{ marginTop: 5, color: "#666" }}>
-                Fait le : {new Date(r.dateCompletion).toLocaleDateString()}
-              </Text>
-            </View>
-          );
-        })}
-      </ScrollView>
+      {/* MODAL SUPPRESSION */}
       {toDelete !== null && (
         <View
-          pointerEvents="auto"
           style={{
             position: "absolute",
             top: 0,
@@ -139,7 +153,6 @@ export default function Profile() {
             justifyContent: "center",
             alignItems: "center",
             padding: 20,
-            zIndex: 10,
           }}
         >
           <View
@@ -158,7 +171,7 @@ export default function Profile() {
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
               <TouchableOpacity
-                onPress={() => setToDelete(null)}
+                onPress={async () => setToDelete(null)}
                 style={{
                   padding: 10,
                   backgroundColor: "#ccc",
@@ -172,8 +185,14 @@ export default function Profile() {
               <TouchableOpacity
                 onPress={async () => {
                   await deleteOneResult(toDelete);
-                  setResults(results.filter((r) => r.id !== toDelete));
+                  setResults((prev) => prev.filter((r) => r.id !== toDelete));
                   setToDelete(null);
+
+                  Toast.show({
+                    type: "success",
+                    text1: "Résultat supprimé",
+                    text2: "Le résultat a bien été retiré de votre historique",
+                  });
                 }}
                 style={{
                   padding: 10,
