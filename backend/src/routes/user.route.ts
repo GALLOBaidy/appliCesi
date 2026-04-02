@@ -8,6 +8,16 @@ import {
 import { getUserById } from "../services/user.service";
 const router = Router();
 
+/**
+ * @openapi
+ * /user:
+ *   get:
+ *     summary: Récupère les infos de l'utilisateur
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+
 router.post("/", userController.createUser);
 router.get("/", authMiddleware, userController.getAllUsers);
 router.get("/me", authMiddleware, async (req, res) => {

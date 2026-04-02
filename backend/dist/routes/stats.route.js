@@ -37,6 +37,15 @@ const express_1 = require("express");
 const ctrl = __importStar(require("../controllers/stats.controller"));
 const auth_middleware_1 = require("../middlewares/auth.middleware");
 const router = (0, express_1.Router)();
+/**
+ * @openapi
+ * /stats:
+ *   get:
+ *     summary: Récupère les statistiques globales de l'application
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 router.get("/users", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), ctrl.totalUsers);
 router.get("/runs", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), ctrl.totalRuns);
 router.get("/runs-by-day", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), ctrl.runsByDay);

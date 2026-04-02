@@ -8,6 +8,16 @@ import {
 
 const router = Router();
 
+/**
+ * @openapi
+ * /stats:
+ *   get:
+ *     summary: Récupère les statistiques globales de l'application
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+
 router.get(
   "/users",
   authMiddleware,

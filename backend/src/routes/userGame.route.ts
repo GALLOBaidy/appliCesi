@@ -5,6 +5,16 @@ import { authMiddleware, optionalAuth, requireAuth } from "../middlewares/auth.m
 
 const router = Router();
 
+/**
+ * @openapi
+ * /userGames:
+ *   get:
+ *     summary: Récupère les infos sur les résultats de l'utilisateur
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+
 // public: create a run (guest or logged)
 router.post("/", optionalAuth, ctrl.create);
 

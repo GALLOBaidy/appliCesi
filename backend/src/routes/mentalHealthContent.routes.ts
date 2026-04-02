@@ -8,6 +8,16 @@ import {
 
 const router = Router();
 
+/**
+ * @openapi
+ * /mental-health-content:
+ *   get:
+ *     summary: Récupère les infos sur le contenu de santé mentale
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+
 router.get(
   "/",
   authMiddleware,

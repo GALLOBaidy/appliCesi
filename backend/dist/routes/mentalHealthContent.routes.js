@@ -37,6 +37,15 @@ const express_1 = require("express");
 const controller = __importStar(require("../controllers/mentalHealthContent.controller"));
 const auth_middleware_1 = require("../middlewares/auth.middleware");
 const router = (0, express_1.Router)();
+/**
+ * @openapi
+ * /mental-health-content:
+ *   get:
+ *     summary: Récupère les infos sur le contenu de santé mentale
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 router.get("/", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), controller.getAll);
 router.get("/public/active", controller.getActive);
 router.get("/:id", controller.getOne);

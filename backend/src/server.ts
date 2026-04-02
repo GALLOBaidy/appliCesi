@@ -7,12 +7,13 @@ import userExoRoute from "./routes/userGame.route";
 import { login } from "./controllers/auth.controller";
 import statsRoutes from "./routes/stats.route";
 import contentRoutes from "./routes/mentalHealthContent.routes"
+import { swaggerSpec, swaggerUiMiddleware } from "./swagger";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-
+app.use("/api-docs", swaggerUiMiddleware.serve, swaggerUiMiddleware.setup(swaggerSpec));
 app.use("/login", login);
 
 // Mes routes

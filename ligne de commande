@@ -14,6 +14,13 @@ npm install -D @types/jsonwebtoken
 npm install -D vitest supertest ts-node @types/supertest
 npm install react-native-toast-message
 expo install @expo/vector-icons
+npm install --save-dev @testing-library/react-native@12.4.5 @testing-library/jest-native@5.4.3 --legacy-peer-deps
+npx expo install jest-expo
+npm install -D vitest
+npm install --save-dev @types/jest
+npm install swagger-ui-express swagger-jsdoc
+
+npm test
 
 "login": "johnDoes",
 "email": "john.doe@example.com",

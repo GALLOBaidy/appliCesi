@@ -5,7 +5,8 @@ import request from "supertest";
 vi.mock("../../src/middlewares/auth.middleware", () => ({
   authMiddleware: (req:Request, res: Response, next: NextFunction) => next(),
   requireAuth: (req:Request, res: Response, next: NextFunction) => next(),
-  requireRole: () => (req:Request, res: Response, next: NextFunction) => next()
+  requireRole: () => (req:Request, res: Response, next: NextFunction) => next(),
+  optionalAuth: () => (req:Request, res: Response, next: NextFunction) => next()
 }));
 
 // mock du service

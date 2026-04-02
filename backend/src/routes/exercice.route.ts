@@ -8,6 +8,16 @@ import {
 
 const router = Router();
 
+/**
+ * @openapi
+ * /exercices:
+ *   get:
+ *     summary: Récupère les infos sur les exercices
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+
 router.post(
   "/",
   authMiddleware,

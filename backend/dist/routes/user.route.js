@@ -38,6 +38,15 @@ const userController = __importStar(require("../controllers/user.controller"));
 const auth_middleware_1 = require("../middlewares/auth.middleware");
 const user_service_1 = require("../services/user.service");
 const router = (0, express_1.Router)();
+/**
+ * @openapi
+ * /user:
+ *   get:
+ *     summary: Récupère les infos de l'utilisateur
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 router.post("/", userController.createUser);
 router.get("/", auth_middleware_1.authMiddleware, userController.getAllUsers);
 router.get("/me", auth_middleware_1.authMiddleware, async (req, res) => {

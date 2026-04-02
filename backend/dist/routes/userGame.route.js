@@ -38,6 +38,15 @@ const express_1 = require("express");
 const ctrl = __importStar(require("../controllers/userGame.controller"));
 const auth_middleware_1 = require("../middlewares/auth.middleware");
 const router = (0, express_1.Router)();
+/**
+ * @openapi
+ * /userGames:
+ *   get:
+ *     summary: Récupère les infos sur les résultats de l'utilisateur
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 // public: create a run (guest or logged)
 router.post("/", auth_middleware_1.optionalAuth, ctrl.create);
 // get by guestId (to restore guest session)
