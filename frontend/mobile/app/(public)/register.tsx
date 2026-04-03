@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import {
   Text,
@@ -10,7 +11,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
-import { createUser } from "../../src/api/routes";
+import { createUser, saveOneResult } from "../../src/api/routes";
 import { User } from "../../src/types/User";
 
 export default function Register() {
@@ -29,16 +30,16 @@ export default function Register() {
     setError(null);
 
     // Vérification des champs vides
-  if (
-    !firstName.trim() ||
-    !lastName.trim() ||
-    !email.trim() ||
-    !loginName.trim() ||
-    !password.trim()
-  ) {
-    setError("Veuillez remplir tous les champs");
-    return;
-  }
+    if (
+      !firstName.trim() ||
+      !lastName.trim() ||
+      !email.trim() ||
+      !loginName.trim() ||
+      !password.trim()
+    ) {
+      setError("Veuillez remplir tous les champs");
+      return;
+    }
     try {
       const payload = {
         firstName,
@@ -54,6 +55,21 @@ export default function Register() {
       // Connexion automatique après inscription
       await login(data.user, data.token);
 
+      const pending = JSON.parse(
+        (await AsyncStorage.getItem("pendingResults")) || "[]",
+      );
+
+      if (pending.length > 0) {
+        try {
+          for (const r of pending) {
+            await saveOneResult(r);
+          }
+          await AsyncStorage.removeItem("pendingResults");
+        } catch (e) {
+          console.log("Erreur en envoyant les pendingResults :", e);
+          // On garde pendingResults pour réessayer plus tard
+        }
+      }
       router.replace("/(tabs)/profile");
     } catch (e: any) {
       console.log("Erreur API:", e.response?.data);

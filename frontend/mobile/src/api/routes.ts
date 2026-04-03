@@ -44,8 +44,8 @@ export const getCurrentUser = () =>
 export const createUser = (payload: any) =>
   api.post<{ user: User; token: string }>("/users", payload);
 
-export const updateProfil = (payload: Partial<User>) =>
-  api.put<User>(`/users/me`, payload);
+export const updateProfil = (id: number, payload: Partial<User>) =>
+  api.put<User>(`/users/${id}`, payload);
 
 export const deleteUser = (id: number) =>
   api.delete(`/users/${id}`);

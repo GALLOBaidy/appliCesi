@@ -58,7 +58,7 @@ router.get("/me", auth_middleware_1.authMiddleware, async (req, res) => {
     return res.json({ user });
 });
 router.get("/:id", auth_middleware_1.authMiddleware, userController.getUserById);
-router.put("/me", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, userController.updateUser);
+router.put("/:id", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, userController.updateUser);
 router.delete("/:id", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, userController.deleteUser);
 router.patch("/:id/role", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), userController.updateRole);
 router.patch("/:id/toggle", auth_middleware_1.authMiddleware, auth_middleware_1.requireAuth, (0, auth_middleware_1.requireRole)("Admin"), userController.toggleAccount);

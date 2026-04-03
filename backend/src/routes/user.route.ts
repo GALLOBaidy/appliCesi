@@ -30,7 +30,7 @@ router.get("/me", authMiddleware, async (req, res) => {
   return res.json({ user });
 });
 router.get("/:id", authMiddleware, userController.getUserById);
-router.put("/me", authMiddleware, requireAuth, userController.updateUser);
+router.put("/:id", authMiddleware, requireAuth, userController.updateUser);
 router.delete("/:id", authMiddleware, requireAuth, userController.deleteUser);
 
 router.patch(
