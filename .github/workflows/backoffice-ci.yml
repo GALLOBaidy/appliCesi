@@ -30,4 +30,4 @@ jobs:
         with:
           context: ./frontend/backoffice
           push: true
-          tags: ghcr.io/${{ github.repository }}/backoffice:latest
+          tags: ghcr.io/gallobaidy/applicesi/backoffice:latest
