@@ -1,5 +1,5 @@
 # Étape 1 : Build (TypeScript → JavaScript)
-FROM node:24-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY . .
 RUN npm run build
 
 # Étape 2 : Production
-FROM node:24-alpine AS runner
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 
