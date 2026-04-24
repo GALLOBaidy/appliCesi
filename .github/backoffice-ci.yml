@@ -1,0 +1,33 @@
+name: Build Backoffice
+
+on:
+  push:
+    paths:
+      - "frontend/backoffice/**"
+      - ".github/workflows/backoffice-ci.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}
+
+      - name: Build and push backoffice
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend/backoffice
+          push: true
+          tags: ghcr.io/${{ github.repository }}/backoffice:latest
