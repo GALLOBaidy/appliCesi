@@ -1,0 +1,25 @@
+name: Backoffice CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/backoffice/**"
+      - ".github/workflows/backoffice-cd.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_KEY }}
+          script: |
+            cd /var/www/applicesi
+            docker compose pull
+            docker compose up -d --force-recreate
