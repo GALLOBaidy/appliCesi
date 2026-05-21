@@ -1,9 +1,9 @@
-name: Build Backend
+name: Backend CI
 
 on:
   push:
     branches:
-      - main
+      - develop
     paths:
       - "backend/**"
       - ".github/workflows/backend-ci.yml"
@@ -17,19 +17,16 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Login to GHCR
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Build and push backend
-        uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v6
         with:
           context: ./backend
           push: true
-          tags: ghcr.io/gallobaidy/applicesi/backend:latest
+          tags: ghcr.io/gallobaidy/applicesi/backend:dev
