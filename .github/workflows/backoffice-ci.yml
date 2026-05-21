@@ -2,9 +2,8 @@ name: Build Backoffice
 
 on:
   push:
-    paths:
-      - "frontend/backoffice/**"
-      - ".github/workflows/backoffice-ci.yml"
+    branches:
+      - main
 
 jobs:
   build:
