@@ -1,8 +1,8 @@
 // services/userExercice.service.ts
-import { db } from "../models"; // ton client drizzle
-import { userExercice } from "../models/schema/userExercice.model";
-import { exercices } from "../models/schema/exercice.model";
-import { NewUserExercice } from "../models/type";
+import { db } from "../models/index.js"; // ton client drizzle
+import { userExercice } from "../models/schema/userExercice.model.js";
+import { exercices } from "../models/schema/exercice.model.js";
+import { NewUserExercice } from "../models/type.js";
 import { eq } from "drizzle-orm";
 
 export const createUserExercice = async (payload: NewUserExercice) => {

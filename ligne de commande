@@ -39,3 +39,7 @@ echo \
 
 sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+
+docker exec -t <nom_container_local> pg_dump -U user -d mydbAppli > dump.sql
+scp -i C:\Users\black\Downloads\cesi_key.pem dump.sql azureuser@74.242.219.88:/var/www/applicesi/   dump.sql                                                            

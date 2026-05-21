@@ -1,5 +1,5 @@
-import { db } from "../models";
-import { mentalHealthContent } from "../models/schema/mentalHealthContent.model";
+import { db } from "../models/index.js";
+import { mentalHealthContent } from "../models/schema/mentalHealthContent.model.js";
 import { eq } from "drizzle-orm";
 
 // Récupérer tous les contenus
@@ -105,7 +105,7 @@ export const toggleContentStatus = async (id: number) => {
   return result[0] ?? null;
 };
 
-// Récupérer que les contenus actif
+// Récupérer que les contenus actifs
 export const getActiveContent = async () => {
   return db
     .select()

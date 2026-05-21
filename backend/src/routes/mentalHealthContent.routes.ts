@@ -1,10 +1,10 @@
 import { Router } from "express";
-import * as controller from "../controllers/mentalHealthContent.controller";
+import * as controller from "../controllers/mentalHealthContent.controller.js";
 import {
   authMiddleware,
   requireRole,
   requireAuth,
-} from "../middlewares/auth.middleware";
+} from "../middlewares/auth.middleware.js";
 
 const router = Router();
 

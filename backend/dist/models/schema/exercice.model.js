@@ -1,21 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.exercicesRelations = exports.exercices = void 0;
-const pg_core_1 = require("drizzle-orm/pg-core");
-const drizzle_orm_1 = require("drizzle-orm");
-const userExercice_model_1 = require("./userExercice.model");
-exports.exercices = (0, pg_core_1.pgTable)("exercices", {
-    exerciceId: (0, pg_core_1.serial)("exercice_id").primaryKey(),
-    title: (0, pg_core_1.varchar)("title"),
-    description: (0, pg_core_1.text)("description"),
-    type: (0, pg_core_1.varchar)("type"),
-    totalDuration: (0, pg_core_1.integer)("total_duration"),
-    inhalationDuration: (0, pg_core_1.integer)("inhalation_duration"),
-    holdDuration: (0, pg_core_1.integer)("hold_duration").default(0),
-    exhalationDuration: (0, pg_core_1.integer)("exhalation_duration"),
-    cycle: (0, pg_core_1.integer)("cycle_"),
-    status: (0, pg_core_1.boolean)("status"),
+import { pgTable, serial, varchar, text, integer, boolean } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { userExercice } from "./userExercice.model.js";
+export const exercices = pgTable("exercices", {
+    exerciceId: serial("exercice_id").primaryKey(),
+    title: varchar("title"),
+    description: text("description"),
+    type: varchar("type"),
+    totalDuration: integer("total_duration"),
+    inhalationDuration: integer("inhalation_duration"),
+    holdDuration: integer("hold_duration").default(0),
+    exhalationDuration: integer("exhalation_duration"),
+    cycle: integer("cycle_"),
+    status: boolean("status"),
 });
-exports.exercicesRelations = (0, drizzle_orm_1.relations)(exports.exercices, ({ many }) => ({
-    doneBy: many(userExercice_model_1.userExercice),
+export const exercicesRelations = relations(exercices, ({ many }) => ({
+    doneBy: many(userExercice),
 }));

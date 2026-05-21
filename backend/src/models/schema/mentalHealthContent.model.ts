@@ -7,7 +7,7 @@ import {
   timestamp,
   integer,
 } from "drizzle-orm/pg-core";
-import { users } from "./user.model";
+import { users } from "./user.model.js";
 
 export const mentalHealthContent = pgTable("mental_health_content", {
   id: serial("id").primaryKey(),

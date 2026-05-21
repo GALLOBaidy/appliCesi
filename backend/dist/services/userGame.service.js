@@ -1,82 +1,72 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.linkGuestToUser = exports.deleteByGuestId = exports.deleteUserExercice = exports.getByGuestId = exports.getByUser = exports.getById = exports.createUserExercice = void 0;
 // services/userExercice.service.ts
-const models_1 = require("../models"); // ton client drizzle
-const userExercice_model_1 = require("../models/schema/userExercice.model");
-const exercice_model_1 = require("../models/schema/exercice.model");
-const drizzle_orm_1 = require("drizzle-orm");
-const createUserExercice = async (payload) => {
-    const [row] = await models_1.db.insert(userExercice_model_1.userExercice).values(payload).returning();
+import { db } from "../models/index.js"; // ton client drizzle
+import { userExercice } from "../models/schema/userExercice.model.js";
+import { exercices } from "../models/schema/exercice.model.js";
+import { eq } from "drizzle-orm";
+export const createUserExercice = async (payload) => {
+    const [row] = await db.insert(userExercice).values(payload).returning();
     return row;
 };
-exports.createUserExercice = createUserExercice;
-const getById = async (id) => {
-    const rows = await models_1.db
+export const getById = async (id) => {
+    const rows = await db
         .select({
-        id: userExercice_model_1.userExercice.id,
-        feeling: userExercice_model_1.userExercice.feeling,
-        dateCompletion: userExercice_model_1.userExercice.dateCompletion,
-        userId: userExercice_model_1.userExercice.userId,
-        guestId: userExercice_model_1.userExercice.guestId,
-        exerciceId: userExercice_model_1.userExercice.exerciceId,
-        exerciceTitle: exercice_model_1.exercices.title,
+        id: userExercice.id,
+        feeling: userExercice.feeling,
+        dateCompletion: userExercice.dateCompletion,
+        userId: userExercice.userId,
+        guestId: userExercice.guestId,
+        exerciceId: userExercice.exerciceId,
+        exerciceTitle: exercices.title,
     })
-        .from(userExercice_model_1.userExercice)
-        .innerJoin(exercice_model_1.exercices, (0, drizzle_orm_1.eq)(userExercice_model_1.userExercice.exerciceId, exercice_model_1.exercices.exerciceId))
-        .where((0, drizzle_orm_1.eq)(userExercice_model_1.userExercice.id, id));
+        .from(userExercice)
+        .innerJoin(exercices, eq(userExercice.exerciceId, exercices.exerciceId))
+        .where(eq(userExercice.id, id));
     return rows[0] ?? null;
 };
-exports.getById = getById;
-const getByUser = async (userId) => {
-    return models_1.db
+export const getByUser = async (userId) => {
+    return db
         .select({
-        id: userExercice_model_1.userExercice.id,
-        feeling: userExercice_model_1.userExercice.feeling,
-        dateCompletion: userExercice_model_1.userExercice.dateCompletion,
-        exerciceId: userExercice_model_1.userExercice.exerciceId,
-        exerciceTitle: exercice_model_1.exercices.title,
+        id: userExercice.id,
+        feeling: userExercice.feeling,
+        dateCompletion: userExercice.dateCompletion,
+        exerciceId: userExercice.exerciceId,
+        exerciceTitle: exercices.title,
     })
-        .from(userExercice_model_1.userExercice)
-        .innerJoin(exercice_model_1.exercices, (0, drizzle_orm_1.eq)(userExercice_model_1.userExercice.exerciceId, exercice_model_1.exercices.exerciceId))
-        .where((0, drizzle_orm_1.eq)(userExercice_model_1.userExercice.userId, userId));
+        .from(userExercice)
+        .innerJoin(exercices, eq(userExercice.exerciceId, exercices.exerciceId))
+        .where(eq(userExercice.userId, userId));
 };
-exports.getByUser = getByUser;
-const getByGuestId = async (guestId) => {
-    return models_1.db
+export const getByGuestId = async (guestId) => {
+    return db
         .select({
-        id: userExercice_model_1.userExercice.id,
-        feeling: userExercice_model_1.userExercice.feeling,
-        dateCompletion: userExercice_model_1.userExercice.dateCompletion,
-        exerciceId: userExercice_model_1.userExercice.exerciceId,
-        exerciceTitle: exercice_model_1.exercices.title,
+        id: userExercice.id,
+        feeling: userExercice.feeling,
+        dateCompletion: userExercice.dateCompletion,
+        exerciceId: userExercice.exerciceId,
+        exerciceTitle: exercices.title,
     })
-        .from(userExercice_model_1.userExercice)
-        .innerJoin(exercice_model_1.exercices, (0, drizzle_orm_1.eq)(userExercice_model_1.userExercice.exerciceId, exercice_model_1.exercices.exerciceId))
-        .where((0, drizzle_orm_1.eq)(userExercice_model_1.userExercice.guestId, guestId));
+        .from(userExercice)
+        .innerJoin(exercices, eq(userExercice.exerciceId, exercices.exerciceId))
+        .where(eq(userExercice.guestId, guestId));
 };
-exports.getByGuestId = getByGuestId;
-const deleteUserExercice = async (id) => {
-    const [row] = await models_1.db
-        .delete(userExercice_model_1.userExercice)
-        .where((0, drizzle_orm_1.eq)(userExercice_model_1.userExercice.id, id))
+export const deleteUserExercice = async (id) => {
+    const [row] = await db
+        .delete(userExercice)
+        .where(eq(userExercice.id, id))
         .returning();
     return row ?? null;
 };
-exports.deleteUserExercice = deleteUserExercice;
-const deleteByGuestId = async (guestId) => {
-    return models_1.db.delete(userExercice_model_1.userExercice).where((0, drizzle_orm_1.eq)(userExercice_model_1.userExercice.guestId, guestId));
+export const deleteByGuestId = async (guestId) => {
+    return db.delete(userExercice).where(eq(userExercice.guestId, guestId));
 };
-exports.deleteByGuestId = deleteByGuestId;
-const linkGuestToUser = async (guestId, userId) => {
-    const rows = await models_1.db
-        .update(userExercice_model_1.userExercice)
+export const linkGuestToUser = async (guestId, userId) => {
+    const rows = await db
+        .update(userExercice)
         .set({
         userId,
         guestId: null, // on supprime le guestId
     })
-        .where((0, drizzle_orm_1.eq)(userExercice_model_1.userExercice.guestId, guestId))
+        .where(eq(userExercice.guestId, guestId))
         .returning();
     return rows;
 };
-exports.linkGuestToUser = linkGuestToUser;

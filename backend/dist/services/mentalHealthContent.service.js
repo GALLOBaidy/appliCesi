@@ -1,28 +1,23 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getActiveContent = exports.toggleContentStatus = exports.deleteContent = exports.updateContent = exports.createContent = exports.getContentById = exports.getAllContent = void 0;
-const models_1 = require("../models");
-const mentalHealthContent_model_1 = require("../models/schema/mentalHealthContent.model");
-const drizzle_orm_1 = require("drizzle-orm");
+import { db } from "../models/index.js";
+import { mentalHealthContent } from "../models/schema/mentalHealthContent.model.js";
+import { eq } from "drizzle-orm";
 // Récupérer tous les contenus
-const getAllContent = () => {
-    return models_1.db.select().from(mentalHealthContent_model_1.mentalHealthContent);
+export const getAllContent = () => {
+    return db.select().from(mentalHealthContent);
 };
-exports.getAllContent = getAllContent;
 // Récupérer un contenu
-const getContentById = async (id) => {
-    const rows = await models_1.db
+export const getContentById = async (id) => {
+    const rows = await db
         .select()
-        .from(mentalHealthContent_model_1.mentalHealthContent)
-        .where((0, drizzle_orm_1.eq)(mentalHealthContent_model_1.mentalHealthContent.id, id));
+        .from(mentalHealthContent)
+        .where(eq(mentalHealthContent.id, id));
     return rows[0] ?? null;
 };
-exports.getContentById = getContentById;
 // Créer un contenu
-const createContent = async (data) => {
+export const createContent = async (data) => {
     try {
-        const result = await models_1.db
-            .insert(mentalHealthContent_model_1.mentalHealthContent)
+        const result = await db
+            .insert(mentalHealthContent)
             .values({
             title: data.title,
             body: data.body,
@@ -38,11 +33,10 @@ const createContent = async (data) => {
         throw err;
     }
 };
-exports.createContent = createContent;
 // Modifier un contenu
-const updateContent = async (id, data) => {
+export const updateContent = async (id, data) => {
     // Vérifier si le contenu existe
-    const existing = await (0, exports.getContentById)(id);
+    const existing = await getContentById(id);
     if (!existing)
         return null;
     // Préparation des données
@@ -54,10 +48,10 @@ const updateContent = async (id, data) => {
     delete updateData.createdBy;
     delete updateData.createdAt;
     try {
-        const result = await models_1.db
-            .update(mentalHealthContent_model_1.mentalHealthContent)
+        const result = await db
+            .update(mentalHealthContent)
             .set(updateData)
-            .where((0, drizzle_orm_1.eq)(mentalHealthContent_model_1.mentalHealthContent.id, id))
+            .where(eq(mentalHealthContent.id, id))
             .returning();
         return result[0] ?? null;
     }
@@ -66,34 +60,30 @@ const updateContent = async (id, data) => {
         throw err;
     }
 };
-exports.updateContent = updateContent;
 // Supprimer un contenu
-const deleteContent = (id) => {
-    return models_1.db.delete(mentalHealthContent_model_1.mentalHealthContent).where((0, drizzle_orm_1.eq)(mentalHealthContent_model_1.mentalHealthContent.id, id));
+export const deleteContent = (id) => {
+    return db.delete(mentalHealthContent).where(eq(mentalHealthContent.id, id));
 };
-exports.deleteContent = deleteContent;
 // Masquer un contenu
-const toggleContentStatus = async (id) => {
-    const existing = await (0, exports.getContentById)(id);
+export const toggleContentStatus = async (id) => {
+    const existing = await getContentById(id);
     if (!existing)
         return null;
     const newStatus = !existing.isActive;
-    const result = await models_1.db
-        .update(mentalHealthContent_model_1.mentalHealthContent)
+    const result = await db
+        .update(mentalHealthContent)
         .set({
         isActive: newStatus,
         updatedAt: new Date(),
     })
-        .where((0, drizzle_orm_1.eq)(mentalHealthContent_model_1.mentalHealthContent.id, id))
+        .where(eq(mentalHealthContent.id, id))
         .returning();
     return result[0] ?? null;
 };
-exports.toggleContentStatus = toggleContentStatus;
-// Récupérer que les contenus actif
-const getActiveContent = async () => {
-    return models_1.db
+// Récupérer que les contenus actifs
+export const getActiveContent = async () => {
+    return db
         .select()
-        .from(mentalHealthContent_model_1.mentalHealthContent)
-        .where((0, drizzle_orm_1.eq)(mentalHealthContent_model_1.mentalHealthContent.isActive, true));
+        .from(mentalHealthContent)
+        .where(eq(mentalHealthContent.isActive, true));
 };
-exports.getActiveContent = getActiveContent;

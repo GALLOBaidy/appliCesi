@@ -1,7 +1,7 @@
 // routes/userExercice.routes.ts
 import { Router } from "express";
-import * as ctrl from "../controllers/userGame.controller";
-import { authMiddleware, optionalAuth, requireAuth } from "../middlewares/auth.middleware";
+import * as ctrl from "../controllers/userGame.controller.js";
+import { authMiddleware, optionalAuth, requireAuth } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 

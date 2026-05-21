@@ -1,6 +1,6 @@
-import { db } from "../models";
-import { users } from "../models/schema/user.model";
-import { userExercice } from "../models/schema/userExercice.model";
+import { db } from "../models/index.js";
+import { users } from "../models/schema/user.model.js";
+import { userExercice } from "../models/schema/userExercice.model.js";
 import { count, sql } from "drizzle-orm";
 
 // Total des utilisateurs

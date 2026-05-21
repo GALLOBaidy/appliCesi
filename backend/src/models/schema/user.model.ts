@@ -8,7 +8,7 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { userExercice } from "./userExercice.model";
+import { userExercice } from "./userExercice.model.js";
 
 export const users = pgTable("users", {
   userId: serial("user_id").primaryKey(),

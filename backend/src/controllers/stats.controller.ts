@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as svc from "../services/stats.service";
+import * as svc from "../services/stats.service.js";
 
 export const totalUsers = async (req: Request, res: Response) => {
   const total = await svc.getTotalUsers();

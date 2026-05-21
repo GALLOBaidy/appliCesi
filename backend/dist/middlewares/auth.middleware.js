@@ -1,18 +1,12 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.requireRole = exports.optionalAuth = exports.requireAuth = exports.authMiddleware = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const authMiddleware = (req, res, next) => {
+import jwt from "jsonwebtoken";
+export const authMiddleware = (req, res, next) => {
     const header = req.headers.authorization;
     if (!header) {
         return res.status(401).json({ error: "Token manquant" });
     }
     const token = header.split(" ")[1];
     try {
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         // Normalisation : on crée un champ id cohérent
         req.user = {
             ...decoded,
@@ -26,22 +20,20 @@ const authMiddleware = (req, res, next) => {
         return res.status(401).json({ error: "Token invalide" });
     }
 };
-exports.authMiddleware = authMiddleware;
 // requireAuth : bloque si pas connecté
-const requireAuth = (req, res, next) => {
+export const requireAuth = (req, res, next) => {
     if (!req.user)
         return res.status(401).json({ message: "Unauthorized" });
     next();
 };
-exports.requireAuth = requireAuth;
 // optionalAuth : laisse passer, mais peut remplir req.user si token présent
-const optionalAuth = (req, res, next) => {
+export const optionalAuth = (req, res, next) => {
     const header = req.headers.authorization;
     if (!header)
         return next();
     const token = header.split(" ")[1];
     try {
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
     }
     catch (err) {
@@ -50,9 +42,8 @@ const optionalAuth = (req, res, next) => {
     }
     next();
 };
-exports.optionalAuth = optionalAuth;
 // Vérification du role
-const requireRole = (role) => {
+export const requireRole = (role) => {
     return (req, res, next) => {
         const user = req.user;
         if (!user)
@@ -63,4 +54,3 @@ const requireRole = (role) => {
         next();
     };
 };
-exports.requireRole = requireRole;
