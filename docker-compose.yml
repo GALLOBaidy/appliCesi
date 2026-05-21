@@ -1,15 +1,15 @@
 services:
   backoffice:
-    image: ghcr.io/GALLOBaidy/appliCesi/backoffice:latest
+    image: ghcr.io/gallobaidy/applicesi/backoffice:latest
     ports:
       - "80:3000"
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
   backend:
-    image: ghcr.io/GALLOBaidy/appliCesi/backend:latest
+    image: ghcr.io/gallobaidy/applicesi/backend:latest
     ports:
-      - "4000:4000"
+      - "4000:3000"
     environment:
       DATABASE_URL: ${DATABASE_URL}
     depends_on:
