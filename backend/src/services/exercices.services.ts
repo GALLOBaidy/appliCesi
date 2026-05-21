@@ -1,5 +1,5 @@
-import { db } from "../models";
-import { exercices } from "../models/schema/exercice.model";
+import { db } from "../models/index.js";
+import { exercices } from "../models/schema/exercice.model.js";
 import { eq } from "drizzle-orm";
 
 //Création d'un jeu
@@ -101,7 +101,7 @@ export const toggleExerciseStatusService = async (id: number) => {
   return result[0] || null;
 };
 
-// Récupérer que les exos actif
+// Récupérer que les exos actifs
 export const getActiveContent = async () => {
   return db.select().from(exercices).where(eq(exercices.status, true));
 };

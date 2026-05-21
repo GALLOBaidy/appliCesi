@@ -1,6 +1,6 @@
 import { pgTable, serial, varchar, text, integer, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { userExercice } from "./userExercice.model";
+import { userExercice } from "./userExercice.model.js";
 
 export const exercices = pgTable("exercices", {
   exerciceId: serial("exercice_id").primaryKey(),

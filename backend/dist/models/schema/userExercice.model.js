@@ -1,40 +1,37 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.userExerciceRelations = exports.userExercice = exports.FeelingEnum = void 0;
 // models/schema/userExercice.model.ts
-const pg_core_1 = require("drizzle-orm/pg-core");
-const drizzle_orm_1 = require("drizzle-orm");
-const user_model_1 = require("./user.model");
-const exercice_model_1 = require("./exercice.model");
-exports.FeelingEnum = (0, pg_core_1.pgEnum)("feeling_enum", [
+import { pgTable, serial, integer, varchar, timestamp, pgEnum, } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { users } from "./user.model.js";
+import { exercices } from "./exercice.model.js";
+export const FeelingEnum = pgEnum("feeling_enum", [
     "good",
     "neutral",
     "bad",
     "anxious",
     "relaxed",
 ]);
-exports.userExercice = (0, pg_core_1.pgTable)("user_exercice", {
-    id: (0, pg_core_1.serial)("id").primaryKey(),
-    userId: (0, pg_core_1.integer)("user_id")
-        .references(() => user_model_1.users.userId)
+export const userExercice = pgTable("user_exercice", {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+        .references(() => users.userId)
         .$type()
         .default(null),
-    exerciceId: (0, pg_core_1.integer)("exercice_id")
+    exerciceId: integer("exercice_id")
         .notNull()
-        .references(() => exercice_model_1.exercices.exerciceId),
-    guestId: (0, pg_core_1.varchar)("guest_id", { length: 255 })
+        .references(() => exercices.exerciceId),
+    guestId: varchar("guest_id", { length: 255 })
         .$type()
         .default(null),
-    feeling: (0, exports.FeelingEnum)("feeling").notNull(),
-    dateCompletion: (0, pg_core_1.timestamp)("date_completion").notNull(),
+    feeling: FeelingEnum("feeling").notNull(),
+    dateCompletion: timestamp("date_completion").notNull(),
 });
-exports.userExerciceRelations = (0, drizzle_orm_1.relations)(exports.userExercice, ({ one }) => ({
-    user: one(user_model_1.users, {
-        fields: [exports.userExercice.userId],
-        references: [user_model_1.users.userId],
+export const userExerciceRelations = relations(userExercice, ({ one }) => ({
+    user: one(users, {
+        fields: [userExercice.userId],
+        references: [users.userId],
     }),
-    exercice: one(exercice_model_1.exercices, {
-        fields: [exports.userExercice.exerciceId],
-        references: [exercice_model_1.exercices.exerciceId],
+    exercice: one(exercices, {
+        fields: [userExercice.exerciceId],
+        references: [exercices.exerciceId],
     }),
 }));

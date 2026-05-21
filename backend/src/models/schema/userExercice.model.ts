@@ -8,8 +8,8 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { users } from "./user.model";
-import { exercices } from "./exercice.model";
+import { users } from "./user.model.js";
+import { exercices } from "./exercice.model.js";
 
 export const FeelingEnum = pgEnum("feeling_enum", [
   "good",

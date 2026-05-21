@@ -1,42 +1,35 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFeelingsStats = exports.getRunsByDay = exports.getTotalRuns = exports.getTotalUsers = void 0;
-const models_1 = require("../models");
-const user_model_1 = require("../models/schema/user.model");
-const userExercice_model_1 = require("../models/schema/userExercice.model");
-const drizzle_orm_1 = require("drizzle-orm");
+import { db } from "../models/index.js";
+import { users } from "../models/schema/user.model.js";
+import { userExercice } from "../models/schema/userExercice.model.js";
+import { count, sql } from "drizzle-orm";
 // Total des utilisateurs
-const getTotalUsers = async () => {
-    const [row] = await models_1.db.select({ total: (0, drizzle_orm_1.count)() }).from(user_model_1.users);
+export const getTotalUsers = async () => {
+    const [row] = await db.select({ total: count() }).from(users);
     return row.total;
 };
-exports.getTotalUsers = getTotalUsers;
 // Nombre total de runs
-const getTotalRuns = async () => {
-    const [row] = await models_1.db.select({ total: (0, drizzle_orm_1.count)() }).from(userExercice_model_1.userExercice);
+export const getTotalRuns = async () => {
+    const [row] = await db.select({ total: count() }).from(userExercice);
     return row.total;
 };
-exports.getTotalRuns = getTotalRuns;
 // Stats par jour
-const getRunsByDay = async () => {
-    return models_1.db
+export const getRunsByDay = async () => {
+    return db
         .select({
-        date: (0, drizzle_orm_1.sql) `DATE(${userExercice_model_1.userExercice.dateCompletion})`,
-        count: (0, drizzle_orm_1.count)(),
+        date: sql `DATE(${userExercice.dateCompletion})`,
+        count: count(),
     })
-        .from(userExercice_model_1.userExercice)
-        .groupBy((0, drizzle_orm_1.sql) `DATE(${userExercice_model_1.userExercice.dateCompletion})`)
-        .orderBy((0, drizzle_orm_1.sql) `DATE(${userExercice_model_1.userExercice.dateCompletion})`);
+        .from(userExercice)
+        .groupBy(sql `DATE(${userExercice.dateCompletion})`)
+        .orderBy(sql `DATE(${userExercice.dateCompletion})`);
 };
-exports.getRunsByDay = getRunsByDay;
 // Répartition des feelings
-const getFeelingsStats = async () => {
-    return models_1.db
+export const getFeelingsStats = async () => {
+    return db
         .select({
-        feeling: userExercice_model_1.userExercice.feeling,
-        count: (0, drizzle_orm_1.count)(),
+        feeling: userExercice.feeling,
+        count: count(),
     })
-        .from(userExercice_model_1.userExercice)
-        .groupBy(userExercice_model_1.userExercice.feeling);
+        .from(userExercice)
+        .groupBy(userExercice.feeling);
 };
-exports.getFeelingsStats = getFeelingsStats;

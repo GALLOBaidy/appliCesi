@@ -1,6 +1,6 @@
 import * as bcrypt from "bcrypt";
-import { db } from "../models";
-import { users } from "../models/schema/user.model";
+import { db } from "../models/index.js";
+import { users } from "../models/schema/user.model.js";
 import { or, eq } from "drizzle-orm";
 
 // --- Helpers ----------------------------------------------------

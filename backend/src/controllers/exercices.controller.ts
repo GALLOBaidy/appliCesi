@@ -1,4 +1,4 @@
-import * as exercicesService from "../services/exercices.services";
+import * as exercicesService from "../services/exercices.services.js";
 import { Request, Response } from "express";
 
 // Créer un exercice

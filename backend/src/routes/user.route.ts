@@ -1,11 +1,11 @@
 import { Router } from "express";
-import * as userController from "../controllers/user.controller";
+import * as userController from "../controllers/user.controller.js";
 import {
   authMiddleware,
   requireRole,
   requireAuth,
-} from "../middlewares/auth.middleware";
-import { getUserById } from "../services/user.service";
+} from "../middlewares/auth.middleware.js";
+import { getUserById } from "../services/user.service.js";
 const router = Router();
 
 /**

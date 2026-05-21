@@ -1,4 +1,4 @@
-import * as service from "../services/mentalHealthContent.service";
+import * as service from "../services/mentalHealthContent.service.js";
 import { Request, Response } from "express";
 
 export const getAll = async (req: Request, res: Response) => {

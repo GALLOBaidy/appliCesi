@@ -1,10 +1,10 @@
 import { Router } from "express";
-import * as exerciceController from "../controllers/exercices.controller";
+import * as exerciceController from "../controllers/exercices.controller.js";
 import {
   authMiddleware,
   requireAuth,
   requireRole,
-} from "../middlewares/auth.middleware";
+} from "../middlewares/auth.middleware.js";
 
 const router = Router();
 

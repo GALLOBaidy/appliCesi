@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as svc from "../services/userGame.service";
+import * as svc from "../services/userGame.service.js";
 
 // middleware auth doit mettre req.user = { id: number } si connecté
 

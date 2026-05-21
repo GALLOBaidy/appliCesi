@@ -1,4 +1,4 @@
-import * as userService from "../services/user.service";
+import * as userService from "../services/user.service.js";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
