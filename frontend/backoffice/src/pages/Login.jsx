@@ -46,7 +46,7 @@ export default function Login() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #1e3c72 10%, #2a5298 100%)", // joli fond
+        background: "linear-gradient(135deg, #1e3c72 10%, #d87606 100%)", // joli fond
         padding: "0 32px 0 32px",
       }}
     >
