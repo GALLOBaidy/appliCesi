@@ -3,6 +3,13 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 export const login = async (req, res) => {
     const { login, password } = req.body;
+    // Validation des entrées
+    if (typeof login !== "string" ||
+        typeof password !== "string" ||
+        login.trim() === "" ||
+        password.trim() === "") {
+        return res.status(400).json({ error: "Champs invalides" });
+    }
     try {
         const user = await getUserByIdentifier(login);
         // Vérification de l'existence du user
