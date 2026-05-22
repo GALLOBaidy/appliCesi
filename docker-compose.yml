@@ -3,8 +3,6 @@ services:
     image: ghcr.io/gallobaidy/applicesi/backoffice:latest
     ports:
       - "80:3000"
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   backend:
     image: ghcr.io/gallobaidy/applicesi/backend:latest
@@ -16,8 +14,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   db:
     image: postgres:16
@@ -34,19 +30,6 @@ services:
       - db_data:/var/lib/postgresql/data
     ports:
       - "5433:5432"
-
-  ouroboros:
-    image: pyouroboros/ouroboros:latest
-    container_name: ouroboros
-    restart: always
-    environment:
-      - CLEANUP=true
-      - INTERVAL=30
-      - LOG_LEVEL=info
-      - SELF_UPDATE=true
-      - LABEL_ENABLE=true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   db_data:
