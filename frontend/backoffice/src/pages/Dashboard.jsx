@@ -55,7 +55,7 @@ export default function Dashboard() {
     <Box sx={{ p: 4 }}>
       {/* Titre principal */}
       <Typography variant="h4" fontWeight="bold" textAlign="center" mb={4}>
-        Dashboard Admin
+        Dashboard Administration
       </Typography>
 
       {/* Grille des statistiques principales */}
