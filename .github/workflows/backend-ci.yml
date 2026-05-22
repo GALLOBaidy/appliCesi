@@ -32,7 +32,7 @@ jobs:
 
       # 4) Lancement des tests Vitest
       - name: Run tests
-        run: npm test
+        run: npx vitest run
         working-directory: backend
 
       # 5) Connexion à GHCR
