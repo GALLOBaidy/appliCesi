@@ -30,6 +30,10 @@ jobs:
         run: npm install
         working-directory: backend
 
+      - name: Fix Vitest permissions
+        run: chmod +x node_modules/.bin/vitest
+        working-directory: backend
+
       # 4) Lancement des tests Vitest
       - name: Run tests
         run: npx vitest run
