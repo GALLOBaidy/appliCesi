@@ -29,4 +29,4 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ghcr.io/gallobaidy/applicesi/backend:dev
+          tags: ghcr.io/gallobaidy/applicesi/backend:latest

@@ -35,11 +35,18 @@ services:
     ports:
       - "5433:5432"
 
-  watchtower:
-    image: containrrr/watchtower
+  ouroboros:
+    image: pyouroboros/ouroboros:latest
+    container_name: ouroboros
+    restart: always
+    environment:
+      - CLEANUP=true
+      - INTERVAL=30
+      - LOG_LEVEL=info
+      - SELF_UPDATE=true
+      - LABEL_ENABLE=true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 30 --label-enable
 
 volumes:
   db_data:
