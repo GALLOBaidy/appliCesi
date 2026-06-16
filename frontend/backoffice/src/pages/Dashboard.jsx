@@ -68,7 +68,7 @@ export default function Dashboard() {
               p: 3,
               textAlign: "center",
               borderRadius: 3,
-              backgroundColor: "#aad219",
+              backgroundColor: "#d25d19",
               color: "white",
             }}
           >
@@ -87,7 +87,7 @@ export default function Dashboard() {
               p: 3,
               textAlign: "center",
               borderRadius: 3,
-              backgroundColor: "#2e7d32",
+              backgroundColor: "#7d402e",
               color: "white",
             }}
           >
@@ -106,7 +106,7 @@ export default function Dashboard() {
               p: 3,
               textAlign: "center",
               borderRadius: 3,
-              backgroundColor: "#787d2e",
+              backgroundColor: "#3f2e7d",
               color: "white",
             }}
           >
