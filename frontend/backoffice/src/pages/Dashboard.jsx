@@ -106,7 +106,7 @@ export default function Dashboard() {
               p: 3,
               textAlign: "center",
               borderRadius: 3,
-              backgroundColor: "#da0c7d",
+              backgroundColor: "#0cda4a",
               color: "white",
             }}
           >
